@@ -290,8 +290,7 @@
         return Array.isArray(d) ? d : [];
       }).catch(function(){ return []; }),
       fetch(URL_MATCHDAY+"?type=hooper").then(function(r){ return r.json(); }).catch(function(){ return []; }),
-      fetch(URL_BLESSURE).then(function(r){ return r.json(); }).then(function(d){
-        // Si le script renvoie un objet unique (pas un tableau), on retourne tableau vide
+      fetch(URL_BLESSURE+"?action=list").then(function(r){ return r.json(); }).then(function(d){
         return Array.isArray(d) ? d : [];
       }).catch(function(){ return []; })
     ]).then(function(resultats){
@@ -320,7 +319,7 @@
         meteo: { dernieres: [], moyenne: null },
         rpe: { dernieres: [], moyenne: null, alerteIntense: false },
         hooper: { dernier: null, moyenne: null },
-        blessure: { actuelle: null, joursAbsence: 0 },
+        blessure: { actuelle: null, joursAbsence: 0, recentes: [] },
         risque: "vert",
         alertes: []
       };
@@ -383,22 +382,36 @@
       }
     });
 
-    // BLESSURES
+    // BLESSURES — format : {joueur, date, zone, zoneLabel, zoneCroissance, intensite, type, dureeJours, saisiPar}
+    var il_y_a_31j = new Date(aujourd_hui);
+    il_y_a_31j.setDate(aujourd_hui.getDate() - 31);
+
     (data.blessures||[]).forEach(function(d){
-      var nom=d.nom||d.joueur;
+      var nom = d.joueur || d.nom;
       if(!joueurs[nom]) return;
-      // Chercher blessure active (sans date de retour ou date retour dans le futur)
-      var dateRetour = d.date_retour||d.retour||"";
-      var actif = !dateRetour || normalDate(dateRetour) > clefISO(aujourd_hui);
+
+      var dateBlessure = new Date(normalDate(d.date)+"T12:00:00");
+      var duree = parseInt(d.dureeJours, 10) || 0;
+
+      // Blessure active = date + durée couvre aujourd'hui, ou durée = -1 (saison entière)
+      var dateRetour = new Date(dateBlessure);
+      if(duree >= 0) dateRetour.setDate(dateBlessure.getDate() + duree);
+      var actif = duree === -1 || dateRetour >= aujourd_hui;
       if(actif && !joueurs[nom].blessure.actuelle){
         joueurs[nom].blessure.actuelle = d;
       }
-      // Compter jours d'absence sur la saison
-      if(d.date_debut||d.date){
-        var debut = new Date((d.date_debut||d.date)+"T12:00:00");
-        var fin = dateRetour ? new Date(dateRetour+"T12:00:00") : aujourd_hui;
-        var jours = Math.max(0, Math.round((fin-debut)/86400000));
-        joueurs[nom].blessure.joursAbsence += jours;
+
+      // Blessures des 31 derniers jours
+      if(dateBlessure >= il_y_a_31j){
+        if(!joueurs[nom].blessure.recentes) joueurs[nom].blessure.recentes = [];
+        joueurs[nom].blessure.recentes.push(d);
+      }
+
+      // Jours d'absence saison
+      if(duree > 0){
+        joueurs[nom].blessure.joursAbsence += duree;
+      } else if(duree === -1){
+        joueurs[nom].blessure.joursAbsence += 30; // estimation
       }
     });
 
@@ -558,6 +571,51 @@
   }
 
   function escapeHTML(s){ var d=document.createElement("div");d.textContent=s;return d.innerHTML; }
+
+  var ZONES_LABELS = {
+    tete:"Tête", epaule:"Épaule", coude:"Coude", poignet_main:"Poignet / Main",
+    dos_rachis:"Dos / Rachis", hanche_bassin:"Hanche / Bassin", ischio:"Ischio-jambiers",
+    cuisse:"Cuisse / Quadriceps", genou_tta:"Genou — avant (TTA)", genou_autre:"Genou — autre",
+    tibia_mollet:"Tibia / Mollet", cheville:"Cheville", talon:"Talon", pied:"Pied", autre:"Autre"
+  };
+
+  function renderBlessuresRecentes(recentes){
+    var moisFrB = ["jan","fév","mar","avr","mai","jun","jul","aoû","sep","oct","nov","déc"];
+    var html = '<div class="detail-section"><div class="detail-titre">🤕 Blessures — 31 derniers jours ('+recentes.length+')</div>';
+    recentes.sort(function(a,b){ return normalDate(b.date) > normalDate(a.date) ? 1 : -1; });
+    recentes.forEach(function(b){
+      var dateStr = normalDate(b.date);
+      var d = new Date(dateStr+"T12:00:00");
+      var dateAff = d.getDate()+" "+moisFrB[d.getMonth()];
+      var zone = b.zoneLabel || ZONES_LABELS[b.zone] || b.zone || "—";
+      var type = b.type || "—";
+      var intensite = parseInt(b.intensite,10) || 0;
+      var duree = parseInt(b.dureeJours,10);
+      var dureeAff = duree===-1 ? "saison entière" : (duree===0 ? "joue quand même" : duree+" j");
+      var dureeJoursInt = isNaN(duree) ? 0 : duree;
+      var aujourd_hui2 = new Date();
+      var dateRetour2 = new Date(d);
+      if(dureeJoursInt>0) dateRetour2.setDate(d.getDate()+dureeJoursInt);
+      var estActive = dureeJoursInt===-1 || (dureeJoursInt>0 && dateRetour2>=aujourd_hui2);
+
+      // Pastilles intensité
+      var dots="";
+      for(var i=1;i<=5;i++){
+        dots+='<div class="blessure-dot'+(i<=intensite?' active-'+intensite:'')+'"></div>';
+      }
+
+      html += '<div class="blessure-item'+(estActive?' active':'')+'">';
+      html += '<div style="flex:1">';
+      html += '<div class="blessure-zone">'+(estActive?'🔴 ':'')+escapeHTML(zone)+(b.zoneCroissance?' ⚠':'')+'</div>';
+      html += '<div class="blessure-meta">'+dateAff+' · '+dureeAff+(b.cause?' · '+escapeHTML(b.cause):'')+'</div>';
+      html += '<div class="blessure-intensite">'+dots+'</div>';
+      html += '</div>';
+      html += '<span class="blessure-badge '+escapeHTML(type)+'">'+escapeHTML(type)+'</span>';
+      html += '</div>';
+    });
+    html += '</div>';
+    return html;
+  }
 
 })();
 </script>
