@@ -6,24 +6,16 @@
 <title>Cockpit Saison — U13 Limoges Football</title>
 <style>
   :root{
-    --fond:#0f1115;
-    --panneau:#1a1d24;
-    --panneau-clair:#22262f;
-    --texte:#eef0f3;
-    --texte-att:#9aa0ad;
-    --ligne:#2c303a;
-    --bleu:#4a7dd6;
-    --vert:#3a9d5a;
-    --or:#d4a82e;
-    --rouge:#c4392f;
+    --fond:#0f1115;--panneau:#1a1d24;--panneau-clair:#22262f;
+    --texte:#eef0f3;--texte-att:#9aa0ad;--ligne:#2c303a;
+    --bleu:#4a7dd6;--vert:#3a9d5a;--or:#d4a82e;--rouge:#c4392f;
   }
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
   html,body{margin:0;padding:0;}
   body{background:var(--fond);color:var(--texte);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;min-height:100vh;}
   .wrap{max-width:700px;margin:0 auto;padding:20px 16px 60px;}
 
-  /* HEADER */
-  .header{text-align:center;margin-bottom:22px;}
+  .header{text-align:center;margin-bottom:20px;}
   .header .tag{display:inline-block;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--texte-att);border:1px solid var(--ligne);border-radius:999px;padding:4px 12px;margin-bottom:10px;}
   .header h1{font-size:24px;font-weight:700;margin:0 0 4px;}
   .header .date{font-size:13px;color:var(--texte-att);}
@@ -35,87 +27,116 @@
   .auth-box button{width:100%;padding:14px;border-radius:12px;border:none;background:var(--bleu);color:#fff;font-size:15px;font-weight:700;cursor:pointer;}
   .auth-erreur{color:#e8a39d;font-size:13px;text-align:center;margin-top:8px;display:none;}
 
+  /* ACTIONS */
+  .actions-bar{display:flex;gap:10px;margin-bottom:16px;}
+  .actions-bar button{flex:1;background:var(--panneau);border:1px solid var(--ligne);color:var(--texte-att);padding:10px;border-radius:10px;font-size:13px;cursor:pointer;}
+  .actions-bar button:hover{border-color:var(--bleu);color:var(--texte);}
+
+  /* VUES */
+  .vues-tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:16px;}
+  .vue-tab{
+    background:var(--panneau);border:1.5px solid var(--ligne);color:var(--texte-att);
+    padding:10px 6px;border-radius:12px;cursor:pointer;text-align:center;
+    font-size:12px;font-weight:700;
+  }
+  .vue-tab.active{border-color:var(--bleu);background:rgba(74,125,214,.12);color:var(--texte);}
+
+  /* DESC VUE */
+  .vue-desc{
+    background:var(--panneau-clair);border:1px solid var(--ligne);border-radius:10px;
+    padding:10px 14px;margin-bottom:16px;font-size:12px;color:var(--texte-att);line-height:1.5;
+  }
+
   /* CHARGEMENT */
   .chargement{text-align:center;padding:40px;color:var(--texte-att);}
-  .chargement .spinner{font-size:32px;display:block;margin-bottom:12px;animation:spin 1.5s linear infinite;}
-  @keyframes spin{from{transform:rotate(0deg);}to{transform:rotate(360deg)};}
+  .spinner{font-size:28px;display:block;margin-bottom:12px;animation:spin 1.5s linear infinite;}
+  @keyframes spin{from{transform:rotate(0deg);}to{transform:rotate(360deg)}}
 
   /* RÉSUMÉ ÉQUIPE */
-  .resume-equipe{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px;}
-  .resume-card{background:var(--panneau);border:1px solid var(--ligne);border-radius:14px;padding:14px;text-align:center;}
-  .resume-card .r-val{font-size:26px;font-weight:800;}
-  .resume-card .r-lbl{font-size:11px;color:var(--texte-att);margin-top:4px;}
+  .resume-equipe{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px;}
+  .resume-card{background:var(--panneau);border:1px solid var(--ligne);border-radius:14px;padding:12px 8px;text-align:center;}
+  .resume-card .r-val{font-size:24px;font-weight:800;}
+  .resume-card .r-lbl{font-size:10px;color:var(--texte-att);margin-top:3px;}
 
   /* FILTRES */
-  .filtres{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;}
-  .filtre-btn{background:var(--panneau-clair);border:1px solid var(--ligne);color:var(--texte-att);font-size:12px;padding:7px 14px;border-radius:999px;cursor:pointer;}
+  .filtres{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;}
+  .filtre-btn{background:var(--panneau-clair);border:1px solid var(--ligne);color:var(--texte-att);font-size:12px;padding:6px 12px;border-radius:999px;cursor:pointer;}
   .filtre-btn.active{border-color:var(--bleu);color:var(--texte);background:rgba(74,125,214,.15);}
 
   /* GRILLE JOUEURS */
   .grille-cockpit{display:flex;flex-direction:column;gap:10px;}
-
-  .joueur-cockpit{
-    background:var(--panneau);border:1px solid var(--ligne);border-radius:16px;
-    padding:14px 16px;cursor:pointer;
-    transition:border-color .15s ease;
-  }
-  .joueur-cockpit:hover{border-color:rgba(74,125,214,.4);}
+  .joueur-cockpit{background:var(--panneau);border:1px solid var(--ligne);border-radius:16px;padding:14px 16px;cursor:pointer;}
   .joueur-cockpit.risque-vert{border-left:4px solid var(--vert);}
   .joueur-cockpit.risque-or{border-left:4px solid var(--or);}
   .joueur-cockpit.risque-rouge{border-left:4px solid var(--rouge);}
+  .joueur-cockpit.bilan{border-left:4px solid var(--bleu);}
 
-  .joueur-header{display:flex;align-items:center;gap:12px;margin-bottom:10px;}
-  .joueur-indicateur{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+  .joueur-header{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+  .joueur-indicateur{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;}
   .joueur-indicateur.vert{background:rgba(58,157,90,.2);}
   .joueur-indicateur.or{background:rgba(212,168,46,.2);}
   .joueur-indicateur.rouge{background:rgba(196,57,47,.2);}
-  .joueur-nom{flex:1;font-size:16px;font-weight:700;}
+  .joueur-indicateur.bilan{background:rgba(74,125,214,.2);}
+  .joueur-nom{flex:1;font-size:15px;font-weight:700;}
   .joueur-blessure{font-size:11px;background:rgba(196,57,47,.15);color:var(--rouge);border:1px solid rgba(196,57,47,.3);padding:3px 8px;border-radius:999px;}
-  .joueur-absences{font-size:11px;color:var(--texte-att);}
 
-  .joueur-metriques{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
+  /* MÉTRIQUES */
+  .joueur-metriques{display:grid;gap:6px;}
+  .joueur-metriques.cols4{grid-template-columns:repeat(4,1fr);}
+  .joueur-metriques.cols3{grid-template-columns:repeat(3,1fr);}
+  .joueur-metriques.cols2{grid-template-columns:repeat(2,1fr);}
   .metrique{background:var(--panneau-clair);border-radius:10px;padding:10px 8px;text-align:center;}
-  .metrique .m-val{font-size:18px;font-weight:700;margin-bottom:2px;}
+  .metrique .m-val{font-size:17px;font-weight:700;margin-bottom:2px;}
   .metrique .m-lbl{font-size:10px;color:var(--texte-att);line-height:1.3;}
-  .metrique .m-trend{font-size:10px;margin-top:2px;}
+  .m-vert{color:var(--vert);} .m-or{color:var(--or);} .m-rouge{color:var(--rouge);} .m-bleu{color:var(--bleu);} .m-gris{color:var(--texte-att);}
 
-  /* Couleurs métriques */
-  .m-vert{color:var(--vert);}
-  .m-or{color:var(--or);}
-  .m-rouge{color:var(--rouge);}
-  .m-gris{color:var(--texte-att);}
-
-  /* DÉTAIL JOUEUR (expand) */
+  /* DÉTAIL */
   .joueur-detail{display:none;margin-top:12px;border-top:1px solid var(--ligne);padding-top:12px;}
   .joueur-detail.show{display:block;}
-
-  .detail-section{margin-bottom:12px;}
   .detail-titre{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--texte-att);margin-bottom:8px;font-weight:700;}
-  .detail-ligne{display:flex;justify-content:space-between;font-size:13px;padding:6px 0;border-bottom:1px solid var(--ligne);}
+  .detail-ligne{display:flex;justify-content:space-between;font-size:13px;padding:5px 0;border-bottom:1px solid var(--ligne);}
   .detail-ligne:last-child{border-bottom:none;}
   .detail-ligne .d-lbl{color:var(--texte-att);}
   .detail-ligne .d-val{font-weight:600;}
+  .detail-section{margin-bottom:12px;}
 
-  .historique-mini{display:flex;gap:4px;margin-top:6px;}
-  .histo-point{width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;}
-  .histo-point.nv1{background:rgba(58,157,90,.2);color:var(--vert);}
-  .histo-point.nv2{background:rgba(212,168,46,.15);color:var(--or);}
-  .histo-point.nv3{background:rgba(212,113,31,.2);color:#d4711f;}
-  .histo-point.nv4{background:rgba(196,57,47,.2);color:var(--rouge);}
-  .histo-point.nv5{background:rgba(74,74,82,.3);color:#9aa0ad;}
-  .histo-point.rpe-bas{background:rgba(58,157,90,.2);color:var(--vert);}
-  .histo-point.rpe-moy{background:rgba(212,168,46,.15);color:var(--or);}
-  .histo-point.rpe-haut{background:rgba(196,57,47,.2);color:var(--rouge);}
+  .historique-mini{display:flex;gap:4px;margin-top:6px;flex-wrap:wrap;}
+  .histo-point{width:26px;height:26px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;}
+  .nv1{background:rgba(58,157,90,.2);color:var(--vert);}
+  .nv2{background:rgba(212,168,46,.15);color:var(--or);}
+  .nv3{background:rgba(212,113,31,.2);color:#d4711f;}
+  .nv4{background:rgba(196,57,47,.2);color:var(--rouge);}
+  .nv5{background:rgba(74,74,82,.3);color:#9aa0ad;}
+  .rpe-bas{background:rgba(58,157,90,.2);color:var(--vert);}
+  .rpe-moy{background:rgba(212,168,46,.15);color:var(--or);}
+  .rpe-haut{background:rgba(196,57,47,.2);color:var(--rouge);}
 
   .alerte-ligne{background:rgba(196,57,47,.08);border:1px solid rgba(196,57,47,.25);border-radius:8px;padding:8px 10px;font-size:12px;color:#e8a39d;margin-top:6px;}
 
-  /* ACTIONS */
-  .actions-bar{display:flex;gap:10px;margin-bottom:18px;}
-  .actions-bar button{flex:1;background:var(--panneau);border:1px solid var(--ligne);color:var(--texte-att);padding:10px;border-radius:10px;font-size:13px;cursor:pointer;}
-  .actions-bar button:hover{border-color:var(--bleu);color:var(--texte);}
+  /* BLESSURES */
+  .blessure-item{display:flex;align-items:flex-start;gap:10px;background:var(--panneau-clair);border:1px solid var(--ligne);border-radius:10px;padding:10px 12px;margin-bottom:6px;}
+  .blessure-item.active-inj{border-color:var(--rouge);background:rgba(196,57,47,.08);}
+  .blessure-zone{font-size:13px;font-weight:700;}
+  .blessure-meta{font-size:11px;color:var(--texte-att);margin-top:2px;line-height:1.4;}
+  .blessure-badge{font-size:10px;font-weight:700;padding:3px 8px;border-radius:6px;flex-shrink:0;white-space:nowrap;}
+  .blessure-badge.traumatique{background:rgba(196,57,47,.15);color:var(--rouge);}
+  .blessure-badge.surcharge{background:rgba(212,168,46,.15);color:var(--or);}
+  .blessure-badge.croissance{background:rgba(74,125,214,.15);color:var(--bleu);}
+  .blessure-badge.autre{background:var(--panneau-clair);color:var(--texte-att);}
+  .intensite-dots{display:flex;gap:3px;margin-top:4px;}
+  .i-dot{width:8px;height:8px;border-radius:50%;background:var(--ligne);}
+  .i-dot.i1{background:var(--vert);} .i-dot.i2{background:#8fc43a;} .i-dot.i3{background:var(--or);} .i-dot.i4{background:#d4611f;} .i-dot.i5{background:var(--rouge);}
 
+  /* SAISON — BILAN */
+  .bilan-zone-bar{display:flex;align-items:center;gap:8px;margin-bottom:6px;}
+  .bilan-zone-bar .bz-lbl{font-size:12px;flex:1;}
+  .bilan-zone-bar .bz-count{font-size:12px;font-weight:700;color:var(--rouge);width:20px;text-align:right;}
+  .bilan-zone-bar .bz-track{width:60px;height:6px;border-radius:999px;background:var(--ligne);overflow:hidden;}
+  .bilan-zone-bar .bz-fill{height:100%;border-radius:999px;background:var(--rouge);}
+
+  .last-update{text-align:right;font-size:11px;color:var(--texte-att);margin-bottom:10px;}
   .footer-note{text-align:center;color:var(--texte-att);font-size:11.5px;margin-top:26px;line-height:1.5;}
-  .last-update{text-align:right;font-size:11px;color:var(--texte-att);margin-bottom:12px;}
+  .vide{text-align:center;color:var(--texte-att);font-size:14px;padding:30px;border:1px dashed var(--ligne);border-radius:14px;}
 </style>
 </head>
 <body>
@@ -127,7 +148,6 @@
     <div class="date" id="dateAffichee"></div>
   </div>
 
-  <!-- AUTH -->
   <div id="ecranAuth">
     <div class="auth-box">
       <h2>Accès coach</h2>
@@ -137,7 +157,6 @@
     </div>
   </div>
 
-  <!-- COCKPIT -->
   <div id="ecranCockpit" style="display:none;">
 
     <div class="actions-bar">
@@ -145,64 +164,42 @@
       <button id="btnDeconnexion">🔒 Verrouiller</button>
     </div>
 
-    <!-- CHARGEMENT -->
-    <div class="chargement" id="chargement">
-      <span class="spinner">⚙️</span>
-      Chargement des données…
+    <!-- SÉLECTEUR DE VUE -->
+    <div class="vues-tabs">
+      <button class="vue-tab active" data-vue="7j">7 derniers<br>jours</button>
+      <button class="vue-tab" data-vue="30j">30 derniers<br>jours</button>
+      <button class="vue-tab" data-vue="3m">3 derniers<br>mois</button>
+      <button class="vue-tab" data-vue="saison">Saison<br>complète</button>
     </div>
 
-    <!-- CONTENU -->
+    <div class="vue-desc" id="vueDesc"></div>
+
+    <div class="chargement" id="chargement">
+      <span class="spinner">⚙️</span>Chargement des données…
+    </div>
+
     <div id="contenuCockpit" style="display:none;">
-
       <div class="last-update" id="lastUpdate"></div>
-
-      <!-- Résumé équipe -->
-      <div class="resume-equipe">
-        <div class="resume-card">
-          <div class="r-val" id="resVert" style="color:var(--vert)">—</div>
-          <div class="r-lbl">🟢 En forme</div>
-        </div>
-        <div class="resume-card">
-          <div class="r-val" id="resOr" style="color:var(--or)">—</div>
-          <div class="r-lbl">🟡 À surveiller</div>
-        </div>
-        <div class="resume-card">
-          <div class="r-val" id="resRouge" style="color:var(--rouge)">—</div>
-          <div class="r-lbl">🔴 À risque</div>
-        </div>
-        <div class="resume-card">
-          <div class="r-val" id="resBlessures" style="color:var(--rouge)">—</div>
-          <div class="r-lbl">🤕 Blessés</div>
-        </div>
-      </div>
-
-      <!-- Filtres -->
-      <div class="filtres">
+      <div class="resume-equipe" id="resumeEquipe"></div>
+      <div class="filtres" id="filtresZone" style="display:none;">
         <button class="filtre-btn active" data-filtre="tous">Tous</button>
         <button class="filtre-btn" data-filtre="rouge">🔴 À risque</button>
         <button class="filtre-btn" data-filtre="or">🟡 À surveiller</button>
         <button class="filtre-btn" data-filtre="vert">🟢 En forme</button>
         <button class="filtre-btn" data-filtre="blesse">🤕 Blessés</button>
       </div>
-
-      <!-- Grille joueurs -->
       <div class="grille-cockpit" id="grilleCockpit"></div>
-
     </div>
+
   </div>
 
-  <div class="footer-note">
-    Données agrégées depuis Météo · RPE · Match Day · Blessures<br>
-    Mise à jour à chaque actualisation
-  </div>
-
+  <div class="footer-note">Données agrégées depuis Météo · RPE · Match Day · Blessures</div>
 </div>
+
 <script>
 (function(){
-
   var CODE_PIN = "0501";
-  var SESSION_KEY = "cockpit_auth";
-
+  var SESSION_KEY = "cockpit_auth_v2";
   var URL_METEO    = "https://script.google.com/macros/s/AKfycby9nP9dZjcJHINPigF8_cBBbBEcRXk-buyNKW6vvs4zpnz2e9UYXzB8OzzCuLg5C9A73g/exec";
   var URL_RPE      = "https://script.google.com/macros/s/AKfycbxpcsBjwqNDR7LkbT53krZK2d29iQlDzpOUovqD2FCnEGHjENNWE6orj6upb7PtHrLo/exec";
   var URL_MATCHDAY = "https://script.google.com/macros/s/AKfycbzYTdTfQWN9CCujM7p4JwNplNgmOIz9HyA1hv609FQWiQeRXlYE3h-Xj40ekKI5Wpwpaw/exec";
@@ -210,50 +207,46 @@
 
   var EFFECTIF = ["Abdoul Karim","Adam","Bakoutoubo","Bilel","Emir","Ethan","Gabin","Hadi","Issam","Jalil","Kalifa","Keys","Loan","Mathis","Melih","Mickaël","Nourou","Pablo","Sacha","Sarah","Sebastien","Yanis"];
 
+  var ZONES_LABELS = {
+    tete:"Tête",epaule:"Épaule",coude:"Coude",poignet_main:"Poignet / Main",
+    dos_rachis:"Dos / Rachis",hanche_bassin:"Hanche / Bassin",ischio:"Ischio-jambiers",
+    cuisse:"Cuisse / Quadriceps",genou_tta:"Genou — avant (TTA)",genou_autre:"Genou — autre",
+    tibia_mollet:"Tibia / Mollet",cheville:"Cheville",talon:"Talon",pied:"Pied",autre:"Autre"
+  };
+
   var moisFr = ["janvier","février","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","décembre"];
+  var moisFrC = ["jan","fév","mar","avr","mai","jun","jul","aoû","sep","oct","nov","déc"];
   var joursFr = ["dimanche","lundi","mardi","mercredi","jeudi","vendredi","samedi"];
+
   function formatDate(d){ return joursFr[d.getDay()]+" "+d.getDate()+" "+moisFr[d.getMonth()]+" "+d.getFullYear(); }
-  function clefISO(d){ return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); }
   function normalDate(str){
     if(!str) return "";
-    if(typeof str === "object") str = str.toString();
-    // Format Google Apps Script : "Fri Jul 25 2026 00:00:00 GMT+0200..."
-    // On parse avec Date() et on reformate en YYYY-MM-DD
-    if(str.length > 10){
-      try{
-        var d = new Date(str);
-        if(!isNaN(d.getTime())){
-          // Utiliser l'heure locale pour extraire la date
-          var year = d.getFullYear();
-          var month = String(d.getMonth()+1).padStart(2,"0");
-          var day = String(d.getDate()).padStart(2,"0");
-          return year+"-"+month+"-"+day;
-        }
-      }catch(e){}
+    if(typeof str==="object") str=str.toString();
+    if(str.length>10){
+      try{ var d=new Date(str); if(!isNaN(d.getTime())){ return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); } }catch(e){}
       return str.substring(0,10);
     }
     return str;
   }
+  function dateDepuis(jours){
+    var d=new Date(); d.setDate(d.getDate()-jours); d.setHours(0,0,0,0); return d;
+  }
+  function debutSaison(){
+    var d=new Date();
+    var annee = d.getMonth()<7 ? d.getFullYear()-1 : d.getFullYear(); // avant août = saison précédente
+    return new Date(annee,7,1); // 1er août
+  }
 
   document.getElementById("dateAffichee").textContent = formatDate(new Date());
-
-  var filtreActif = "tous";
-  var donneesCockpit = null;
 
   // ---- AUTH ----
   var inputPIN = document.getElementById("inputPIN");
   inputPIN.addEventListener("input", function(){ this.value=this.value.replace(/[^0-9]/g,"").slice(0,4); });
-
   document.getElementById("btnAuth").addEventListener("click", function(){
-    if(inputPIN.value.trim() !== CODE_PIN){
-      document.getElementById("authErreur").style.display="block";
-      return;
-    }
-    sessionStorage.setItem(SESSION_KEY, "1");
+    if(inputPIN.value.trim()!==CODE_PIN){ document.getElementById("authErreur").style.display="block"; return; }
+    sessionStorage.setItem(SESSION_KEY,"1");
     ouvrirCockpit();
   });
-
-  // Auto-connexion si session active
   if(sessionStorage.getItem(SESSION_KEY)==="1") ouvrirCockpit();
 
   function ouvrirCockpit(){
@@ -261,362 +254,387 @@
     document.getElementById("ecranCockpit").style.display="block";
     chargerTout();
   }
-
-  document.getElementById("btnDeconnexion").addEventListener("click", function(){
-    sessionStorage.removeItem(SESSION_KEY);
-    location.reload();
-  });
-
+  document.getElementById("btnDeconnexion").addEventListener("click", function(){ sessionStorage.removeItem(SESSION_KEY); location.reload(); });
   document.getElementById("btnActualiser").addEventListener("click", chargerTout);
 
+  // ---- VUES ----
+  var vueActive = "7j";
+  var VUES = {
+    "7j":    { label:"7 derniers jours",   desc:"Focus terrain : Météo + RPE + blessures actives. Seuils stricts — peu de données, chaque signal compte.", risque:true },
+    "30j":   { label:"30 derniers jours",  desc:"Vue équilibrée : toutes les métriques actives. Idéale pour le suivi hebdomadaire.", risque:true },
+    "3m":    { label:"3 derniers mois",    desc:"Vue performance : Hooper + blessures. Météo et RPE affichés mais hors calcul du risque.", risque:false },
+    "saison":{ label:"Saison complète (août → juin)", desc:"Bilan global : jours d'absence, zones de blessures récurrentes, Hooper moyen sur la saison. Pas d'indicateur de risque.", risque:false }
+  };
+
+  document.querySelectorAll(".vue-tab").forEach(function(tab){
+    tab.addEventListener("click", function(){
+      document.querySelectorAll(".vue-tab").forEach(function(t){ t.classList.remove("active"); });
+      tab.classList.add("active");
+      vueActive = tab.getAttribute("data-vue");
+      document.getElementById("vueDesc").textContent = VUES[vueActive].desc;
+      if(donneesBrutes) afficherCockpit(donneesBrutes);
+    });
+  });
+  document.getElementById("vueDesc").textContent = VUES["7j"].desc;
+
   // ---- FILTRES ----
+  var filtreActif = "tous";
   document.querySelectorAll(".filtre-btn").forEach(function(btn){
     btn.addEventListener("click", function(){
       document.querySelectorAll(".filtre-btn").forEach(function(b){ b.classList.remove("active"); });
       btn.classList.add("active");
       filtreActif = btn.getAttribute("data-filtre");
-      if(donneesCockpit) afficherCockpit(donneesCockpit);
+      if(donneesBrutes) afficherCockpit(donneesBrutes);
     });
   });
 
-  // ---- CHARGEMENT DONNÉES ----
+  // ---- CHARGEMENT ----
+  var donneesBrutes = null;
   function chargerTout(){
     document.getElementById("chargement").style.display="block";
     document.getElementById("contenuCockpit").style.display="none";
-
     Promise.all([
-      fetch(URL_METEO).then(function(r){ return r.json(); }).catch(function(){ return []; }),
-      fetch(URL_RPE+"?type=rpe_post").then(function(r){ return r.json(); }).then(function(d){
-        return Array.isArray(d) ? d : [];
-      }).catch(function(){ return []; }),
-      fetch(URL_MATCHDAY+"?type=hooper").then(function(r){ return r.json(); }).catch(function(){ return []; }),
-      fetch(URL_BLESSURE+"?action=list").then(function(r){ return r.json(); }).then(function(d){
-        return Array.isArray(d) ? d : [];
-      }).catch(function(){ return []; })
-    ]).then(function(resultats){
-      var data = {
-        meteo: resultats[0],
-        rpe: resultats[1],
-        hooper: resultats[2],
-        blessures: resultats[3]
-      };
-      donneesCockpit = analyserDonnees(data);
-      afficherCockpit(donneesCockpit);
-      document.getElementById("lastUpdate").textContent = "Mis à jour à " + new Date().toLocaleTimeString("fr-FR", {hour:"2-digit",minute:"2-digit"});
+      fetch(URL_METEO).then(function(r){ return r.json(); }).then(function(d){ return Array.isArray(d)?d:[]; }).catch(function(){ return []; }),
+      fetch(URL_RPE+"?type=rpe_post").then(function(r){ return r.json(); }).then(function(d){ return Array.isArray(d)?d:[]; }).catch(function(){ return []; }),
+      fetch(URL_MATCHDAY+"?type=hooper").then(function(r){ return r.json(); }).then(function(d){ return Array.isArray(d)?d:[]; }).catch(function(){ return []; }),
+      fetch(URL_BLESSURE+"?action=list").then(function(r){ return r.json(); }).then(function(d){ return Array.isArray(d)?d:[]; }).catch(function(){ return []; })
+    ]).then(function(res){
+      donneesBrutes = { meteo:res[0], rpe:res[1], hooper:res[2], blessures:res[3] };
+      afficherCockpit(donneesBrutes);
+      document.getElementById("lastUpdate").textContent = "Mis à jour à "+new Date().toLocaleTimeString("fr-FR",{hour:"2-digit",minute:"2-digit"});
     }).catch(function(){
-      document.getElementById("chargement").innerHTML = '<div style="color:var(--texte-att);padding:30px;text-align:center;">Impossible de charger certaines données. Vérifiez votre connexion.</div>';
+      document.getElementById("chargement").innerHTML="<div class='vide'>Impossible de charger les données. Vérifiez votre connexion.</div>";
     });
   }
 
-  // ---- ANALYSE ----
-  function analyserDonnees(data){
+  // ---- ANALYSE selon la vue ----
+  function bornesVue(vue){
+    var fin = new Date(); fin.setHours(23,59,59,999);
+    var debut;
+    if(vue==="7j") debut=dateDepuis(7);
+    else if(vue==="30j") debut=dateDepuis(30);
+    else if(vue==="3m") debut=dateDepuis(91);
+    else debut=debutSaison();
+    return {debut:debut, fin:fin};
+  }
+
+  function filtrerParDate(tableau, bornes, champDate){
+    return tableau.filter(function(d){
+      var dateStr = normalDate(d[champDate||"date"]);
+      if(!dateStr) return false;
+      var d2 = new Date(dateStr+"T12:00:00");
+      return d2>=bornes.debut && d2<=bornes.fin;
+    });
+  }
+
+  function analyserJoueur(nom, data, vue){
+    var bornes = bornesVue(vue);
+    var j = {
+      nom:nom, vue:vue,
+      meteo:  {donnees:[], moyenne:null},
+      rpe:    {donnees:[], moyenne:null, alerteIntense:false},
+      hooper: {donnees:[], moyenne:null, dernier:null},
+      blessure:{actuelle:null, recentes:[], joursAbsence:0, parZone:{}},
+      risque:"bilan", alertes:[]
+    };
+
+    // MÉTÉO
+    j.meteo.donnees = filtrerParDate(
+      (data.meteo||[]).filter(function(d){ return d.nom===nom; }),
+      bornes
+    ).map(function(d){ return {date:normalDate(d.date), niveau:parseInt(d.niveau,10)}; })
+     .sort(function(a,b){ return a.date<b.date?1:-1; });
+
+    if(j.meteo.donnees.length>0){
+      var s=0; j.meteo.donnees.forEach(function(d){ s+=d.niveau; });
+      j.meteo.moyenne = (s/j.meteo.donnees.length).toFixed(1);
+    }
+
+    // RPE
+    j.rpe.donnees = filtrerParDate(
+      (data.rpe||[]).filter(function(d){ return d.nom===nom; }),
+      bornes
+    ).map(function(d){ return {date:normalDate(d.date), rpe:parseInt(d.rpe,10)}; })
+     .sort(function(a,b){ return a.date<b.date?1:-1; });
+
+    if(j.rpe.donnees.length>0){
+      var s=0; j.rpe.donnees.forEach(function(d){ s+=d.rpe; });
+      j.rpe.moyenne = (s/j.rpe.donnees.length).toFixed(1);
+      var recentes = j.rpe.donnees.slice(0,3);
+      var nbInt = recentes.filter(function(d){ return d.rpe>=8; }).length;
+      if(nbInt>=2) j.rpe.alerteIntense=true;
+    }
+
+    // HOOPER
+    j.hooper.donnees = filtrerParDate(
+      (data.hooper||[]).filter(function(d){ return d.nom===nom && d.palier!=="_verif"; }),
+      bornes
+    ).map(function(d){
+      var t=(parseInt(d.sommeil,10)||0)+(parseInt(d.fatigue,10)||0)+(parseInt(d.humeur,10)||0)+(parseInt(d.douleurs,10)||0)+(parseInt(d.motivation,10)||0);
+      return {date:normalDate(d.date), total:t};
+    }).sort(function(a,b){ return a.date<b.date?1:-1; });
+
+    if(j.hooper.donnees.length>0){
+      var s=0; j.hooper.donnees.forEach(function(d){ s+=d.total; });
+      j.hooper.moyenne=(s/j.hooper.donnees.length).toFixed(1);
+      j.hooper.dernier=j.hooper.donnees[0];
+    }
+
+    // BLESSURES
     var aujourd_hui = new Date();
-    var joueurs = {};
+    (data.blessures||[]).filter(function(d){ return (d.joueur||d.nom)===nom; }).forEach(function(d){
+      var dateStr = normalDate(d.date);
+      if(!dateStr) return;
+      var dateBl = new Date(dateStr+"T12:00:00");
+      var duree = parseInt(d.dureeJours,10)||0;
+      var dateRetour = new Date(dateBl);
+      if(duree>0) dateRetour.setDate(dateBl.getDate()+duree);
+      var actif = duree===-1 || (duree>0 && dateRetour>=aujourd_hui);
 
-    EFFECTIF.forEach(function(nom){
-      joueurs[nom] = {
-        nom: nom,
-        meteo: { dernieres: [], moyenne: null },
-        rpe: { dernieres: [], moyenne: null, alerteIntense: false },
-        hooper: { dernier: null, moyenne: null },
-        blessure: { actuelle: null, joursAbsence: 0, recentes: [] },
-        risque: "vert",
-        alertes: []
-      };
-    });
+      if(actif && !j.blessure.actuelle) j.blessure.actuelle=d;
+      if(duree>0) j.blessure.joursAbsence+=duree;
+      else if(duree===-1) j.blessure.joursAbsence+=30;
 
-    // MÉTÉO : 4 dernières séances par joueur
-    var meteoParJoueur = {};
-    (data.meteo||[]).forEach(function(d){
-      var nom = d.nom; var n = parseInt(d.niveau,10);
-      if(!meteoParJoueur[nom]) meteoParJoueur[nom] = [];
-      meteoParJoueur[nom].push({date: normalDate(d.date), heure: d.heure, niveau: n});
-    });
-    Object.keys(meteoParJoueur).forEach(function(nom){
-      if(!joueurs[nom]) return;
-      var tri = meteoParJoueur[nom].sort(function(a,b){ return a.date<b.date?1:-1; }).slice(0,8);
-      joueurs[nom].meteo.dernieres = tri;
-      if(tri.length>0){
-        var somme=0; tri.slice(0,4).forEach(function(d){ somme+=d.niveau; });
-        joueurs[nom].meteo.moyenne = (somme/Math.min(tri.length,4)).toFixed(1);
+      if(dateBl>=bornes.debut){
+        j.blessure.recentes.push(d);
+        var z=d.zone||"autre";
+        j.blessure.parZone[z]=(j.blessure.parZone[z]||0)+1;
       }
     });
 
-    // RPE : 4 dernières séances
-    var rpeParJoueur = {};
-    (data.rpe||[]).forEach(function(d){
-      var nom=d.nom; var n=parseInt(d.rpe,10);
-      if(!rpeParJoueur[nom]) rpeParJoueur[nom]=[];
-      rpeParJoueur[nom].push({date:normalDate(d.date), rpe:n});
-    });
-    Object.keys(rpeParJoueur).forEach(function(nom){
-      if(!joueurs[nom]) return;
-      var tri = rpeParJoueur[nom].sort(function(a,b){ return a.date<b.date?1:-1; }).slice(0,8);
-      joueurs[nom].rpe.dernieres = tri;
-      if(tri.length>0){
-        var somme=0; tri.slice(0,4).forEach(function(d){ somme+=d.rpe; });
-        joueurs[nom].rpe.moyenne = (somme/Math.min(tri.length,4)).toFixed(1);
-        // Alerte : 2 RPE ≥ 8 sur les 3 dernières séances
-        var recentes = tri.slice(0,3);
-        var nbIntense = recentes.filter(function(d){ return d.rpe>=8; }).length;
-        if(nbIntense>=2) joueurs[nom].rpe.alerteIntense=true;
-      }
-    });
+    // CALCUL DU RISQUE
+    if(vue==="saison"){ j.risque="bilan"; return j; }
 
-    // HOOPER : dernier score et moyenne
-    var hooperParJoueur = {};
-    (data.hooper||[]).forEach(function(d){
-      if(d.palier==="_verif") return;
-      var nom=d.nom;
-      if(!hooperParJoueur[nom]) hooperParJoueur[nom]=[];
-      var total = (parseInt(d.sommeil,10)||0)+(parseInt(d.fatigue,10)||0)+(parseInt(d.humeur,10)||0)+(parseInt(d.douleurs,10)||0)+(parseInt(d.motivation,10)||0);
-      hooperParJoueur[nom].push({date:normalDate(d.date), total:total, detail:d});
-    });
-    Object.keys(hooperParJoueur).forEach(function(nom){
-      if(!joueurs[nom]) return;
-      var tri = hooperParJoueur[nom].sort(function(a,b){ return a.date<b.date?1:-1; });
-      joueurs[nom].hooper.dernier = tri[0]||null;
-      if(tri.length>0){
-        var somme=0; tri.slice(0,5).forEach(function(d){ somme+=d.total; });
-        joueurs[nom].hooper.moyenne = (somme/Math.min(tri.length,5)).toFixed(1);
-      }
-    });
+    if(j.blessure.actuelle){ j.risque="rouge"; j.alertes.push("🤕 Blessure en cours"); return j; }
 
-    // BLESSURES — format : {joueur, date, zone, zoneLabel, zoneCroissance, intensite, type, dureeJours, saisiPar}
-    var il_y_a_31j = new Date(aujourd_hui);
-    il_y_a_31j.setDate(aujourd_hui.getDate() - 31);
+    var score=0;
+    var mM=parseFloat(j.meteo.moyenne), mR=parseFloat(j.rpe.moyenne), mH=parseFloat(j.hooper.moyenne);
 
-    (data.blessures||[]).forEach(function(d){
-      var nom = d.joueur || d.nom;
-      if(!joueurs[nom]) return;
-
-      var dateBlessure = new Date(normalDate(d.date)+"T12:00:00");
-      var duree = parseInt(d.dureeJours, 10) || 0;
-
-      // Blessure active = date + durée couvre aujourd'hui, ou durée = -1 (saison entière)
-      var dateRetour = new Date(dateBlessure);
-      if(duree >= 0) dateRetour.setDate(dateBlessure.getDate() + duree);
-      var actif = duree === -1 || dateRetour >= aujourd_hui;
-      if(actif && !joueurs[nom].blessure.actuelle){
-        joueurs[nom].blessure.actuelle = d;
-      }
-
-      // Blessures des 31 derniers jours
-      if(dateBlessure >= il_y_a_31j){
-        if(!joueurs[nom].blessure.recentes) joueurs[nom].blessure.recentes = [];
-        joueurs[nom].blessure.recentes.push(d);
-      }
-
-      // Jours d'absence saison
-      if(duree > 0){
-        joueurs[nom].blessure.joursAbsence += duree;
-      } else if(duree === -1){
-        joueurs[nom].blessure.joursAbsence += 30; // estimation
-      }
-    });
-
-    // CALCUL DU RISQUE GLOBAL
-    EFFECTIF.forEach(function(nom){
-      var j = joueurs[nom];
-      var score = 0; // Plus c'est élevé, plus c'est risqué
-
-      if(j.blessure.actuelle){ j.risque="rouge"; j.alertes.push("🤕 Blessure en cours"); return; }
-
-      var moyMeteo = parseFloat(j.meteo.moyenne);
-      var moyRPE = parseFloat(j.rpe.moyenne);
-      var moyHooper = parseFloat(j.hooper.moyenne);
-
-      if(!isNaN(moyMeteo)){
-        if(moyMeteo>=4) score+=3;
-        else if(moyMeteo>=3) score+=1;
-      }
-      if(!isNaN(moyRPE)){
-        if(moyRPE>=8) score+=2;
-        else if(moyRPE>=6.5) score+=1;
-      }
+    if(vue==="7j"){
+      if(!isNaN(mM)){ if(mM>=3) score+=3; else if(mM>=2.5) score+=1; }
+      if(!isNaN(mR)){ if(mR>=7) score+=2; else if(mR>=6) score+=1; }
+      if(j.rpe.alerteIntense){ score+=2; j.alertes.push("⚡ RPE ≥ 8 deux fois cette semaine"); }
+      if(j.blessure.recentes.length>=1) score+=1;
+    } else if(vue==="30j"){
+      if(!isNaN(mM)){ if(mM>=3.5) score+=3; else if(mM>=3) score+=1; }
+      if(!isNaN(mR)){ if(mR>=7.5) score+=2; else if(mR>=6.5) score+=1; }
       if(j.rpe.alerteIntense){ score+=2; j.alertes.push("⚡ RPE ≥ 8 deux fois récemment"); }
-      if(!isNaN(moyHooper)){
-        if(moyHooper>=18) score+=3;
-        else if(moyHooper>=14) score+=1;
-      }
+      if(j.blessure.recentes.length>=2) score+=2;
+      else if(j.blessure.recentes.length===1) score+=1;
+    } else if(vue==="3m"){
+      // Météo et RPE affichés mais pas dans le calcul
+      if(!isNaN(mH)){ if(mH>=18) score+=3; else if(mH>=14) score+=1; }
+      if(j.blessure.recentes.length>=3){ score+=2; j.alertes.push("🤕 "+j.blessure.recentes.length+" blessures sur 3 mois"); }
+      else if(j.blessure.recentes.length>=2) score+=1;
       if(j.blessure.joursAbsence>=14) score+=1;
+    }
 
-      if(score>=5) j.risque="rouge";
-      else if(score>=2) j.risque="or";
-      else j.risque="vert";
+    if(!isNaN(mM) && mM>=3.5) j.alertes.push("😴 Fatigue élevée (météo moy. "+mM+"/5)");
+    if(!isNaN(mH) && mH>=18) j.alertes.push("📋 Hooper préoccupant ("+mH+"/25)");
 
-      if(!isNaN(moyMeteo) && moyMeteo>=4) j.alertes.push("😴 Fatigue élevée en séance (météo moy. "+moyMeteo+")");
-      if(!isNaN(moyHooper) && moyHooper>=18) j.alertes.push("📋 Score Hooper préoccupant ("+moyHooper+"/25)");
-    });
+    if(score>=5) j.risque="rouge";
+    else if(score>=2) j.risque="or";
+    else j.risque="vert";
 
-    return joueurs;
+    return j;
   }
 
   // ---- AFFICHAGE ----
-  function afficherCockpit(joueurs){
+  function afficherCockpit(data){
     document.getElementById("chargement").style.display="none";
     document.getElementById("contenuCockpit").style.display="block";
 
-    var nbVert=0,nbOr=0,nbRouge=0,nbBlesses=0;
+    var vue=vueActive;
+    var avecRisque = VUES[vue].risque;
+
+    // Filtres visibles seulement pour les vues avec risque
+    document.getElementById("filtresZone").style.display = avecRisque ? "flex" : "none";
+
+    // Analyser tous les joueurs
+    var joueurs = {};
+    EFFECTIF.forEach(function(nom){ joueurs[nom]=analyserJoueur(nom,data,vue); });
+
+    // Résumé
+    var nbV=0,nbO=0,nbR=0,nbB=0;
     EFFECTIF.forEach(function(nom){
       var j=joueurs[nom];
-      if(j.blessure.actuelle) nbBlesses++;
-      if(j.risque==="vert") nbVert++;
-      else if(j.risque==="or") nbOr++;
-      else nbRouge++;
+      if(j.blessure.actuelle) nbB++;
+      if(j.risque==="vert") nbV++;
+      else if(j.risque==="or") nbO++;
+      else if(j.risque==="rouge") nbR++;
     });
-    document.getElementById("resVert").textContent=nbVert;
-    document.getElementById("resOr").textContent=nbOr;
-    document.getElementById("resRouge").textContent=nbRouge;
-    document.getElementById("resBlessures").textContent=nbBlesses;
 
+    var resumeHTML = "";
+    if(avecRisque){
+      resumeHTML =
+        '<div class="resume-card"><div class="r-val" style="color:var(--vert)">'+nbV+'</div><div class="r-lbl">🟢 En forme</div></div>'+
+        '<div class="resume-card"><div class="r-val" style="color:var(--or)">'+nbO+'</div><div class="r-lbl">🟡 À surveiller</div></div>'+
+        '<div class="resume-card"><div class="r-val" style="color:var(--rouge)">'+nbR+'</div><div class="r-lbl">🔴 À risque</div></div>'+
+        '<div class="resume-card"><div class="r-val" style="color:var(--rouge)">'+nbB+'</div><div class="r-lbl">🤕 Blessés</div></div>';
+    } else if(vue==="saison"){
+      // Bilan saison : total jours absence, nb blessures, matchs hooper
+      var totalJours=0, totalBlessures=0, totalHooper=0, nbHooper=0;
+      EFFECTIF.forEach(function(nom){
+        var j=joueurs[nom];
+        totalJours+=j.blessure.joursAbsence;
+        totalBlessures+=j.blessure.recentes.length;
+        if(j.hooper.moyenne!==null){ totalHooper+=parseFloat(j.hooper.moyenne); nbHooper++; }
+      });
+      resumeHTML =
+        '<div class="resume-card"><div class="r-val" style="color:var(--rouge)">'+totalJours+'</div><div class="r-lbl">🤕 Jours d\'absence totaux</div></div>'+
+        '<div class="resume-card"><div class="r-val" style="color:var(--or)">'+totalBlessures+'</div><div class="r-lbl">📋 Blessures signalées</div></div>'+
+        '<div class="resume-card"><div class="r-val" style="color:var(--bleu)">'+(nbHooper>0?(totalHooper/nbHooper).toFixed(1):"—")+'</div><div class="r-lbl">📊 Hooper moy. équipe</div></div>'+
+        '<div class="resume-card"><div class="r-val" style="color:var(--texte-att)">'+nbB+'</div><div class="r-lbl">🔴 Blessés actuels</div></div>';
+    } else {
+      resumeHTML =
+        '<div class="resume-card"><div class="r-val" style="color:var(--texte-att)">'+EFFECTIF.length+'</div><div class="r-lbl">👥 Joueurs</div></div>'+
+        '<div class="resume-card"><div class="r-val" style="color:var(--rouge)">'+nbB+'</div><div class="r-lbl">🤕 Blessés</div></div>'+
+        '<div class="resume-card"><div class="r-val" style="color:var(--bleu)">'+(function(){ var s=0,n=0; EFFECTIF.forEach(function(nom){ if(joueurs[nom].hooper.moyenne!==null){ s+=parseFloat(joueurs[nom].hooper.moyenne); n++; } }); return n>0?(s/n).toFixed(1):"—"; })()+'</div><div class="r-lbl">📊 Hooper moy.</div></div>'+
+        '<div class="resume-card"><div class="r-val" style="color:var(--or)">'+(function(){ var total=0; EFFECTIF.forEach(function(nom){ total+=joueurs[nom].blessure.recentes.length; }); return total; })()+'</div><div class="r-lbl">🩹 Blessures période</div></div>';
+    }
+    document.getElementById("resumeEquipe").innerHTML=resumeHTML;
+
+    // Filtrer + trier
     var liste = EFFECTIF.filter(function(nom){
+      if(!avecRisque) return true;
       var j=joueurs[nom];
       if(filtreActif==="tous") return true;
       if(filtreActif==="blesse") return !!j.blessure.actuelle;
       return j.risque===filtreActif;
     });
 
-    // Trier : rouge d'abord, puis or, puis vert
-    liste.sort(function(a,b){
-      var ordre={rouge:0,or:1,vert:2};
-      return ordre[joueurs[a].risque]-ordre[joueurs[b].risque];
-    });
+    if(avecRisque){
+      liste.sort(function(a,b){
+        var ordre={rouge:0,or:1,vert:2,bilan:3};
+        return ordre[joueurs[a].risque]-ordre[joueurs[b].risque];
+      });
+    }
 
     var grille=document.getElementById("grilleCockpit");
     grille.innerHTML="";
 
     liste.forEach(function(nom){
       var j=joueurs[nom];
-      var emojis={vert:"🟢",or:"🟡",rouge:"🔴"};
-
       var card=document.createElement("div");
-      card.className="joueur-cockpit risque-"+j.risque;
+      card.className="joueur-cockpit "+(avecRisque?"risque-"+j.risque:"bilan");
 
-      // Métriques
-      var moyMeteo = j.meteo.moyenne!==null ? j.meteo.moyenne : "—";
-      var moyRPE   = j.rpe.moyenne!==null   ? j.rpe.moyenne   : "—";
-      var hooScore = j.hooper.dernier        ? j.hooper.dernier.total+"/25" : "—";
-      var hooMoy   = j.hooper.moyenne!==null ? j.hooper.moyenne : null;
+      var emojis={vert:"🟢",or:"🟡",rouge:"🔴",bilan:"📊"};
+      var indicClass=avecRisque?j.risque:"bilan";
 
-      var classeMeteo="m-gris", classeRPE="m-gris", classeHooper="m-gris";
-      if(j.meteo.moyenne!==null){
-        var m=parseFloat(j.meteo.moyenne);
-        classeMeteo = m<=2?"m-vert":m<=3?"m-or":"m-rouge";
-      }
-      if(j.rpe.moyenne!==null){
-        var r=parseFloat(j.rpe.moyenne);
-        classeRPE = r<=5?"m-vert":r<=7?"m-or":"m-rouge";
-      }
-      if(j.hooper.moyenne!==null){
-        var h=parseFloat(j.hooper.moyenne);
-        classeHooper = h<=10?"m-vert":h<=16?"m-or":"m-rouge";
-      }
+      var blessureTag=j.blessure.actuelle
+        ?'<span class="joueur-blessure">🤕 Blessé</span>'
+        :(j.blessure.joursAbsence>0?'<span style="font-size:11px;color:var(--texte-att)">'+j.blessure.joursAbsence+'j abs.</span>':'');
 
-      // Historique météo mini (8 dernières)
-      var histoMeteo="";
-      j.meteo.dernieres.slice(0,6).forEach(function(d){
-        histoMeteo+='<div class="histo-point nv'+d.niveau+'">'+d.niveau+'</div>';
-      });
-
-      // Historique RPE mini
-      var histoRPE="";
-      j.rpe.dernieres.slice(0,6).forEach(function(d){
-        var cls = d.rpe<=5?"rpe-bas":d.rpe<=7?"rpe-moy":"rpe-haut";
-        histoRPE+='<div class="histo-point '+cls+'">'+d.rpe+'</div>';
-      });
-
-      // Alertes
-      var alertesHTML="";
-      j.alertes.forEach(function(a){
-        alertesHTML+='<div class="alerte-ligne">'+a+'</div>';
-      });
-
-      var blessureTag = j.blessure.actuelle
-        ? '<span class="joueur-blessure">🤕 Blessé</span>'
-        : (j.blessure.joursAbsence>0 ? '<span class="joueur-absences">'+j.blessure.joursAbsence+'j abs.</span>' : '');
-
-      card.innerHTML =
+      var headerHTML=
         '<div class="joueur-header">'+
-          '<div class="joueur-indicateur '+j.risque+'">'+emojis[j.risque]+'</div>'+
+          '<div class="joueur-indicateur '+indicClass+'">'+emojis[j.risque]+'</div>'+
           '<div class="joueur-nom">'+escapeHTML(nom)+'</div>'+
           blessureTag+
-        '</div>'+
-        '<div class="joueur-metriques">'+
-          '<div class="metrique"><div class="m-val '+classeMeteo+'">'+moyMeteo+'</div><div class="m-lbl">Météo moy.<br>/5</div></div>'+
-          '<div class="metrique"><div class="m-val '+classeRPE+'">'+moyRPE+'</div><div class="m-lbl">RPE moy.<br>/10</div></div>'+
-          '<div class="metrique"><div class="m-val '+classeHooper+'">'+hooScore+'</div><div class="m-lbl">Hooper<br>dernier</div></div>'+
-          '<div class="metrique"><div class="m-val '+(j.alertes.length>0?"m-rouge":"m-vert")+'">'+j.alertes.length+'</div><div class="m-lbl">Alerte'+(j.alertes.length!==1?"s":"")+'</div></div>'+
-        '</div>'+
-        '<div class="joueur-detail" id="detail-'+nom.replace(/\s/g,"_")+'">' +
-          (alertesHTML ? '<div class="detail-section">'+alertesHTML+'</div>' : '') +
-          (histoMeteo ? '<div class="detail-section"><div class="detail-titre">Météo — 6 dernières séances</div><div class="historique-mini">'+histoMeteo+'</div></div>' : '') +
-          (histoRPE ? '<div class="detail-section"><div class="detail-titre">RPE — 6 dernières séances</div><div class="historique-mini">'+histoRPE+'</div></div>' : '') +
-          (hooMoy ? '<div class="detail-section"><div class="detail-ligne"><span class="d-lbl">Hooper moyen (matchs)</span><span class="d-val">'+hooMoy+'/25</span></div></div>' : '') +
-          (j.blessure.joursAbsence>0 ? '<div class="detail-section"><div class="detail-ligne"><span class="d-lbl">Jours d\'absence saison</span><span class="d-val">'+j.blessure.joursAbsence+' j</span></div></div>' : '') +
         '</div>';
 
-      // Click pour expand/collapse
-      card.addEventListener("click", function(){
-        var detail=document.getElementById("detail-"+nom.replace(/\s/g,"_"));
-        detail.classList.toggle("show");
-      });
+      // Métriques selon la vue
+      var metriquesHTML="";
+      if(vue==="7j"||vue==="30j"){
+        var mM=j.meteo.moyenne, mR=j.rpe.moyenne, mH=j.hooper.moyenne!==null?j.hooper.dernier.total+"/25":null;
+        var cM=mM?( parseFloat(mM)<=2?"m-vert":parseFloat(mM)<=3?"m-or":"m-rouge"):"m-gris";
+        var cR=mR?(parseFloat(mR)<=5?"m-vert":parseFloat(mR)<=7?"m-or":"m-rouge"):"m-gris";
+        var cH=j.hooper.moyenne?( parseFloat(j.hooper.moyenne)<=10?"m-vert":parseFloat(j.hooper.moyenne)<=16?"m-or":"m-rouge"):"m-gris";
+        metriquesHTML='<div class="joueur-metriques cols4">'+
+          '<div class="metrique"><div class="m-val '+(cM)+'">'+( mM||"—")+'</div><div class="m-lbl">Météo moy./5</div></div>'+
+          '<div class="metrique"><div class="m-val '+(cR)+'">'+( mR||"—")+'</div><div class="m-lbl">RPE moy./10</div></div>'+
+          '<div class="metrique"><div class="m-val '+(cH)+'">'+( mH||"—")+'</div><div class="m-lbl">Hooper dernier</div></div>'+
+          '<div class="metrique"><div class="m-val '+(j.alertes.length>0?"m-rouge":"m-vert")+'">'+j.alertes.length+'</div><div class="m-lbl">Alertes</div></div>'+
+          '</div>';
+      } else if(vue==="3m"){
+        var mH2=j.hooper.moyenne; var cH2=mH2?(parseFloat(mH2)<=10?"m-vert":parseFloat(mH2)<=16?"m-or":"m-rouge"):"m-gris";
+        metriquesHTML='<div class="joueur-metriques cols3">'+
+          '<div class="metrique"><div class="m-val '+(cH2)+'">'+( mH2||"—")+'/25</div><div class="m-lbl">Hooper moyen</div></div>'+
+          '<div class="metrique"><div class="m-val '+(j.blessure.recentes.length>0?"m-rouge":"m-vert")+'">'+j.blessure.recentes.length+'</div><div class="m-lbl">Blessures 3 mois</div></div>'+
+          '<div class="metrique"><div class="m-val '+(j.blessure.joursAbsence>7?"m-or":"m-vert")+'">'+j.blessure.joursAbsence+'j</div><div class="m-lbl">Absence totale</div></div>'+
+          '</div>';
+      } else { // saison
+        metriquesHTML='<div class="joueur-metriques cols2">'+
+          '<div class="metrique"><div class="m-val '+(j.blessure.recentes.length>0?"m-rouge":"m-vert")+'">'+j.blessure.recentes.length+'</div><div class="m-lbl">Blessures saison</div></div>'+
+          '<div class="metrique"><div class="m-val '+(j.blessure.joursAbsence>0?"m-or":"m-vert")+'">'+j.blessure.joursAbsence+'j</div><div class="m-lbl">Jours d\'absence</div></div>'+
+          '</div>';
+      }
 
+      // DÉTAIL
+      var alertesHTML=j.alertes.map(function(a){ return '<div class="alerte-ligne">'+a+'</div>'; }).join("");
+
+      var histoMeteo=j.meteo.donnees.slice(0,8).map(function(d){
+        return '<div class="histo-point nv'+d.niveau+'">'+d.niveau+'</div>';
+      }).join("");
+
+      var histoRPE=j.rpe.donnees.slice(0,8).map(function(d){
+        var c=d.rpe<=5?"rpe-bas":d.rpe<=7?"rpe-moy":"rpe-haut";
+        return '<div class="histo-point '+c+'">'+d.rpe+'</div>';
+      }).join("");
+
+      var blessuresHTML=j.blessure.recentes.length>0 ? renderBlessures(j.blessure.recentes, vue) : "";
+
+      // Vue saison : zones récurrentes
+      var zonesHTML="";
+      if(vue==="saison" && Object.keys(j.blessure.parZone).length>0){
+        var zonesTriees=Object.keys(j.blessure.parZone).sort(function(a,b){ return j.blessure.parZone[b]-j.blessure.parZone[a]; });
+        var max=j.blessure.parZone[zonesTriees[0]];
+        zonesHTML='<div class="detail-section"><div class="detail-titre">Zones blessées</div>';
+        zonesTriees.forEach(function(z){
+          var n=j.blessure.parZone[z];
+          var lbl=ZONES_LABELS[z]||z;
+          zonesHTML+='<div class="bilan-zone-bar"><span class="bz-lbl">'+escapeHTML(lbl)+'</span><div class="bz-track"><div class="bz-fill" style="width:'+Math.round(n/max*100)+'%"></div></div><span class="bz-count">'+n+'</span></div>';
+        });
+        zonesHTML+='</div>';
+      }
+
+      var detailHTML=
+        '<div class="joueur-detail" id="detail-'+nom.replace(/\s/g,"_")+'">' +
+          (alertesHTML?'<div class="detail-section">'+alertesHTML+'</div>':'')+
+          (histoMeteo&&(vue==="7j"||vue==="30j")?'<div class="detail-section"><div class="detail-titre">Météo — '+j.meteo.donnees.length+' séances</div><div class="historique-mini">'+histoMeteo+'</div></div>':'')+
+          (histoRPE&&(vue==="7j"||vue==="30j")?'<div class="detail-section"><div class="detail-titre">RPE — '+j.rpe.donnees.length+' séances</div><div class="historique-mini">'+histoRPE+'</div></div>':'')+
+          (j.hooper.donnees.length>0?'<div class="detail-section"><div class="detail-ligne"><span class="d-lbl">Hooper moyen ('+j.hooper.donnees.length+' matchs)</span><span class="d-val">'+j.hooper.moyenne+'/25</span></div></div>':'')+
+          zonesHTML+
+          blessuresHTML+
+        '</div>';
+
+      card.innerHTML = headerHTML+metriquesHTML+detailHTML;
+      card.addEventListener("click", function(){
+        document.getElementById("detail-"+nom.replace(/\s/g,"_")).classList.toggle("show");
+      });
       grille.appendChild(card);
     });
 
-    if(liste.length===0){
-      grille.innerHTML='<div style="text-align:center;color:var(--texte-att);padding:30px;">Aucun joueur dans cette catégorie.</div>';
-    }
+    if(liste.length===0) grille.innerHTML='<div class="vide">Aucun joueur dans cette catégorie.</div>';
   }
 
-  function escapeHTML(s){ var d=document.createElement("div");d.textContent=s;return d.innerHTML; }
-
-  var ZONES_LABELS = {
-    tete:"Tête", epaule:"Épaule", coude:"Coude", poignet_main:"Poignet / Main",
-    dos_rachis:"Dos / Rachis", hanche_bassin:"Hanche / Bassin", ischio:"Ischio-jambiers",
-    cuisse:"Cuisse / Quadriceps", genou_tta:"Genou — avant (TTA)", genou_autre:"Genou — autre",
-    tibia_mollet:"Tibia / Mollet", cheville:"Cheville", talon:"Talon", pied:"Pied", autre:"Autre"
-  };
-
-  function renderBlessuresRecentes(recentes){
-    var moisFrB = ["jan","fév","mar","avr","mai","jun","jul","aoû","sep","oct","nov","déc"];
-    var html = '<div class="detail-section"><div class="detail-titre">🤕 Blessures — 31 derniers jours ('+recentes.length+')</div>';
-    recentes.sort(function(a,b){ return normalDate(b.date) > normalDate(a.date) ? 1 : -1; });
+  function renderBlessures(recentes, vue){
+    var label = vue==="saison" ? "Blessures saison" : "Blessures — "+VUES[vue].label;
+    var html='<div class="detail-section"><div class="detail-titre">🤕 '+label+' ('+recentes.length+')</div>';
+    var aujourd_hui=new Date();
+    recentes.sort(function(a,b){ return normalDate(b.date)>normalDate(a.date)?1:-1; });
     recentes.forEach(function(b){
-      var dateStr = normalDate(b.date);
-      var d = new Date(dateStr+"T12:00:00");
-      var dateAff = d.getDate()+" "+moisFrB[d.getMonth()];
-      var zone = b.zoneLabel || ZONES_LABELS[b.zone] || b.zone || "—";
-      var type = b.type || "—";
-      var intensite = parseInt(b.intensite,10) || 0;
-      var duree = parseInt(b.dureeJours,10);
-      var dureeAff = duree===-1 ? "saison entière" : (duree===0 ? "joue quand même" : duree+" j");
-      var dureeJoursInt = isNaN(duree) ? 0 : duree;
-      var aujourd_hui2 = new Date();
-      var dateRetour2 = new Date(d);
-      if(dureeJoursInt>0) dateRetour2.setDate(d.getDate()+dureeJoursInt);
-      var estActive = dureeJoursInt===-1 || (dureeJoursInt>0 && dateRetour2>=aujourd_hui2);
-
-      // Pastilles intensité
-      var dots="";
-      for(var i=1;i<=5;i++){
-        dots+='<div class="blessure-dot'+(i<=intensite?' active-'+intensite:'')+'"></div>';
-      }
-
-      html += '<div class="blessure-item'+(estActive?' active':'')+'">';
-      html += '<div style="flex:1">';
-      html += '<div class="blessure-zone">'+(estActive?'🔴 ':'')+escapeHTML(zone)+(b.zoneCroissance?' ⚠':'')+'</div>';
-      html += '<div class="blessure-meta">'+dateAff+' · '+dureeAff+(b.cause?' · '+escapeHTML(b.cause):'')+'</div>';
-      html += '<div class="blessure-intensite">'+dots+'</div>';
-      html += '</div>';
-      html += '<span class="blessure-badge '+escapeHTML(type)+'">'+escapeHTML(type)+'</span>';
-      html += '</div>';
+      var dateStr=normalDate(b.date);
+      var d=new Date(dateStr+"T12:00:00");
+      var dateAff=d.getDate()+" "+moisFrC[d.getMonth()];
+      var zone=b.zoneLabel||ZONES_LABELS[b.zone]||b.zone||"—";
+      var type=b.type||"autre";
+      var duree=parseInt(b.dureeJours,10)||0;
+      var dureeAff=duree===-1?"saison entière":(duree===0?"joue quand même":duree+" j");
+      var dateRetour=new Date(d); if(duree>0) dateRetour.setDate(d.getDate()+duree);
+      var actif=duree===-1||(duree>0&&dateRetour>=aujourd_hui);
+      var intensite=parseInt(b.intensite,10)||0;
+      var dots=""; for(var i=1;i<=5;i++) dots+='<div class="i-dot'+(i<=intensite?" i"+intensite:"")+'"></div>';
+      html+='<div class="blessure-item'+(actif?" active-inj":'')+'">';
+      html+='<div style="flex:1"><div class="blessure-zone">'+(actif?"🔴 ":"")+escapeHTML(zone)+(b.zoneCroissance?" ⚠":"")+'</div>';
+      html+='<div class="blessure-meta">'+dateAff+" · "+dureeAff+(b.cause?" · "+escapeHTML(b.cause):"")+'</div>';
+      html+='<div class="intensite-dots">'+dots+'</div></div>';
+      html+='<span class="blessure-badge '+escapeHTML(type)+'">'+escapeHTML(type)+'</span></div>';
     });
-    html += '</div>';
+    html+='</div>';
     return html;
   }
 
+  function escapeHTML(s){ var d=document.createElement("div");d.textContent=s;return d.innerHTML; }
 })();
 </script>
 </body>
