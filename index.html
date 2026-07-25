@@ -216,7 +216,22 @@
   function clefISO(d){ return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); }
   function normalDate(str){
     if(!str) return "";
-    if(str.length > 10) return str.substring(0,10);
+    if(typeof str === "object") str = str.toString();
+    // Format Google Apps Script : "Fri Jul 25 2026 00:00:00 GMT+0200..."
+    // On parse avec Date() et on reformate en YYYY-MM-DD
+    if(str.length > 10){
+      try{
+        var d = new Date(str);
+        if(!isNaN(d.getTime())){
+          // Utiliser l'heure locale pour extraire la date
+          var year = d.getFullYear();
+          var month = String(d.getMonth()+1).padStart(2,"0");
+          var day = String(d.getDate()).padStart(2,"0");
+          return year+"-"+month+"-"+day;
+        }
+      }catch(e){}
+      return str.substring(0,10);
+    }
     return str;
   }
 
@@ -271,9 +286,14 @@
 
     Promise.all([
       fetch(URL_METEO).then(function(r){ return r.json(); }).catch(function(){ return []; }),
-      fetch(URL_RPE+"?type=rpe_post").then(function(r){ return r.json(); }).catch(function(){ return []; }),
+      fetch(URL_RPE+"?type=rpe_post").then(function(r){ return r.json(); }).then(function(d){
+        return Array.isArray(d) ? d : [];
+      }).catch(function(){ return []; }),
       fetch(URL_MATCHDAY+"?type=hooper").then(function(r){ return r.json(); }).catch(function(){ return []; }),
-      fetch(URL_BLESSURE).then(function(r){ return r.json(); }).catch(function(){ return []; })
+      fetch(URL_BLESSURE).then(function(r){ return r.json(); }).then(function(d){
+        // Si le script renvoie un objet unique (pas un tableau), on retourne tableau vide
+        return Array.isArray(d) ? d : [];
+      }).catch(function(){ return []; })
     ]).then(function(resultats){
       var data = {
         meteo: resultats[0],
