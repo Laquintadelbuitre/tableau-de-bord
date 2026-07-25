@@ -2,564 +2,789 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Cockpit Saison — U13 Limoges Football</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<title>Suivi Blessures — U13</title>
 <style>
   :root{
-    --fond:#0f1115;
-    --panneau:#1a1d24;
-    --panneau-clair:#22262f;
-    --texte:#eef0f3;
-    --texte-att:#9aa0ad;
-    --ligne:#2c303a;
-    --bleu:#4a7dd6;
-    --vert:#3a9d5a;
-    --or:#d4a82e;
-    --rouge:#c4392f;
+    --turf:#F2F5EE;
+    --turf-dim:#E7ECDF;
+    --ink:#1B2B22;
+    --ink-soft:#4A5C4F;
+    --line:#C9D3C2;
+    --card:#FFFFFF;
+    --amber:#E2A33B;
+    --amber-soft:#FBE9C9;
+    --clay:#C1503D;
+    --clay-soft:#F5D9D2;
+    --sage:#5C8A63;
+    --sage-soft:#DCEBDD;
+    --ink-mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+    --radius: 14px;
   }
-  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  *{box-sizing:border-box;}
   html,body{margin:0;padding:0;}
-  body{background:var(--fond);color:var(--texte);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;min-height:100vh;}
-  .wrap{max-width:700px;margin:0 auto;padding:20px 16px 60px;}
-
-  /* HEADER */
-  .header{text-align:center;margin-bottom:22px;}
-  .header .tag{display:inline-block;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--texte-att);border:1px solid var(--ligne);border-radius:999px;padding:4px 12px;margin-bottom:10px;}
-  .header h1{font-size:24px;font-weight:700;margin:0 0 4px;}
-  .header .date{font-size:13px;color:var(--texte-att);}
-
-  /* AUTH */
-  .auth-box{background:var(--panneau);border:1px solid var(--ligne);border-radius:18px;padding:24px;max-width:340px;margin:0 auto;}
-  .auth-box h2{font-size:17px;margin:0 0 16px;text-align:center;}
-  .auth-box input{width:100%;padding:14px;border-radius:12px;border:1px solid var(--ligne);background:var(--panneau-clair);color:var(--texte);font-size:22px;letter-spacing:.4em;text-align:center;margin-bottom:12px;}
-  .auth-box button{width:100%;padding:14px;border-radius:12px;border:none;background:var(--bleu);color:#fff;font-size:15px;font-weight:700;cursor:pointer;}
-  .auth-erreur{color:#e8a39d;font-size:13px;text-align:center;margin-top:8px;display:none;}
-
-  /* CHARGEMENT */
-  .chargement{text-align:center;padding:40px;color:var(--texte-att);}
-  .chargement .spinner{font-size:32px;display:block;margin-bottom:12px;animation:spin 1.5s linear infinite;}
-  @keyframes spin{from{transform:rotate(0deg);}to{transform:rotate(360deg)};}
-
-  /* RÉSUMÉ ÉQUIPE */
-  .resume-equipe{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px;}
-  .resume-card{background:var(--panneau);border:1px solid var(--ligne);border-radius:14px;padding:14px;text-align:center;}
-  .resume-card .r-val{font-size:26px;font-weight:800;}
-  .resume-card .r-lbl{font-size:11px;color:var(--texte-att);margin-top:4px;}
-
-  /* FILTRES */
-  .filtres{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;}
-  .filtre-btn{background:var(--panneau-clair);border:1px solid var(--ligne);color:var(--texte-att);font-size:12px;padding:7px 14px;border-radius:999px;cursor:pointer;}
-  .filtre-btn.active{border-color:var(--bleu);color:var(--texte);background:rgba(74,125,214,.15);}
-
-  /* GRILLE JOUEURS */
-  .grille-cockpit{display:flex;flex-direction:column;gap:10px;}
-
-  .joueur-cockpit{
-    background:var(--panneau);border:1px solid var(--ligne);border-radius:16px;
-    padding:14px 16px;cursor:pointer;
-    transition:border-color .15s ease;
+  body{
+    background:var(--turf);
+    color:var(--ink);
+    font-family:'Inter',system-ui,-apple-system,Segoe UI,sans-serif;
+    -webkit-font-smoothing:antialiased;
+    padding:0 0 60px 0;
   }
-  .joueur-cockpit:hover{border-color:rgba(74,125,214,.4);}
-  .joueur-cockpit.risque-vert{border-left:4px solid var(--vert);}
-  .joueur-cockpit.risque-or{border-left:4px solid var(--or);}
-  .joueur-cockpit.risque-rouge{border-left:4px solid var(--rouge);}
+  @font-face{ /* fallback safe, no external dependency required */ }
+  header.top{
+    padding:22px 18px 16px;
+    background:var(--ink);
+    color:var(--turf);
+    position:sticky; top:0; z-index:20;
+    border-bottom:3px solid var(--amber);
+  }
+  header.top .eyebrow{
+    font-family:var(--ink-mono);
+    font-size:11px;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    opacity:.65;
+    margin:0 0 4px;
+  }
+  header.top h1{
+    margin:0;
+    font-size:22px;
+    font-weight:800;
+    letter-spacing:-0.01em;
+  }
+  main{max-width:640px; margin:0 auto; padding:18px;}
 
-  .joueur-header{display:flex;align-items:center;gap:12px;margin-bottom:10px;}
-  .joueur-indicateur{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
-  .joueur-indicateur.vert{background:rgba(58,157,90,.2);}
-  .joueur-indicateur.or{background:rgba(212,168,46,.2);}
-  .joueur-indicateur.rouge{background:rgba(196,57,47,.2);}
-  .joueur-nom{flex:1;font-size:16px;font-weight:700;}
-  .joueur-blessure{font-size:11px;background:rgba(196,57,47,.15);color:var(--rouge);border:1px solid rgba(196,57,47,.3);padding:3px 8px;border-radius:999px;}
-  .joueur-absences{font-size:11px;color:var(--texte-att);}
+  .card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:18px;
+    margin-bottom:16px;
+  }
+  .card h2{
+    margin:0 0 12px;
+    font-size:13px;
+    font-weight:700;
+    text-transform:uppercase;
+    letter-spacing:.08em;
+    color:var(--ink-soft);
+    display:flex; align-items:center; gap:8px;
+  }
+  .card h2 .n{
+    font-family:var(--ink-mono);
+    background:var(--turf-dim);
+    color:var(--ink);
+    border-radius:6px;
+    padding:1px 7px;
+    font-size:11px;
+  }
 
-  .joueur-metriques{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
-  .metrique{background:var(--panneau-clair);border-radius:10px;padding:10px 8px;text-align:center;}
-  .metrique .m-val{font-size:18px;font-weight:700;margin-bottom:2px;}
-  .metrique .m-lbl{font-size:10px;color:var(--texte-att);line-height:1.3;}
-  .metrique .m-trend{font-size:10px;margin-top:2px;}
+  label.field-label{
+    display:block; font-size:13px; font-weight:600; margin:0 0 6px;
+  }
+  select, input[type=text], input[type=number], input[type=date], textarea{
+    width:100%;
+    font-family:inherit;
+    font-size:15px;
+    padding:11px 12px;
+    border-radius:10px;
+    border:1.5px solid var(--line);
+    background:var(--turf);
+    color:var(--ink);
+  }
+  textarea{resize:vertical; min-height:60px;}
+  select:focus, input:focus, textarea:focus, button:focus-visible{
+    outline:2px solid var(--sage); outline-offset:1px;
+  }
 
-  /* Couleurs métriques */
-  .m-vert{color:var(--vert);}
-  .m-or{color:var(--or);}
-  .m-rouge{color:var(--rouge);}
-  .m-gris{color:var(--texte-att);}
+  .row{display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:14px;}
+  .row.single{grid-template-columns:1fr;}
+  .row:last-child{margin-bottom:0;}
 
-  /* DÉTAIL JOUEUR (expand) */
-  .joueur-detail{display:none;margin-top:12px;border-top:1px solid var(--ligne);padding-top:12px;}
-  .joueur-detail.show{display:block;}
+  /* Tabs for zone entry mode */
+  .page{display:none;}
+  .page.active{display:block;}
+  .page-tabs{display:flex; gap:8px; margin-bottom:16px;}
+  .page-tab-btn{
+    flex:1; border:1.5px solid var(--ink); background:var(--card); color:var(--ink);
+    font-family:inherit; font-size:13.5px; font-weight:800; letter-spacing:.01em;
+    padding:11px 8px; border-radius:12px; cursor:pointer;
+  }
+  .page-tab-btn.active{background:var(--ink); color:var(--turf);}
+  .dot{display:inline-block; width:10px; height:10px; border-radius:50%; margin:0 2px -1px;}
+  .dot-0{background:var(--turf-dim); border:1px solid var(--line);}
+  .dot-1{background:var(--amber);}
+  .dot-2{background:var(--clay);}
 
-  .detail-section{margin-bottom:12px;}
-  .detail-titre{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--texte-att);margin-bottom:8px;font-weight:700;}
-  .detail-ligne{display:flex;justify-content:space-between;font-size:13px;padding:6px 0;border-bottom:1px solid var(--ligne);}
-  .detail-ligne:last-child{border-bottom:none;}
-  .detail-ligne .d-lbl{color:var(--texte-att);}
-  .detail-ligne .d-val{font-weight:600;}
+  .tabbar{display:flex; gap:6px; margin-bottom:14px;}
+  .tabbar button{
+    flex:1;
+    border:1.5px solid var(--line);
+    background:var(--turf);
+    color:var(--ink-soft);
+    font-family:inherit; font-size:13px; font-weight:700;
+    padding:9px 6px; border-radius:10px; cursor:pointer;
+  }
+  .tabbar button.active{
+    background:var(--ink); color:var(--turf); border-color:var(--ink);
+  }
+  .tabpane{display:none;}
+  .tabpane.active{display:block;}
 
-  .historique-mini{display:flex;gap:4px;margin-top:6px;}
-  .histo-point{width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;}
-  .histo-point.nv1{background:rgba(58,157,90,.2);color:var(--vert);}
-  .histo-point.nv2{background:rgba(212,168,46,.15);color:var(--or);}
-  .histo-point.nv3{background:rgba(212,113,31,.2);color:#d4711f;}
-  .histo-point.nv4{background:rgba(196,57,47,.2);color:var(--rouge);}
-  .histo-point.nv5{background:rgba(74,74,82,.3);color:#9aa0ad;}
-  .histo-point.rpe-bas{background:rgba(58,157,90,.2);color:var(--vert);}
-  .histo-point.rpe-moy{background:rgba(212,168,46,.15);color:var(--or);}
-  .histo-point.rpe-haut{background:rgba(196,57,47,.2);color:var(--rouge);}
+  /* Body map */
+  .bodymap-wrap{display:flex; flex-direction:column; align-items:center; gap:8px;}
+  .bodymap-toggle{display:flex; gap:8px; margin-bottom:6px;}
+  .bodymap-toggle button{
+    border:1px solid var(--line); background:var(--turf-dim); color:var(--ink-soft);
+    font-family:var(--ink-mono); font-size:11px; letter-spacing:.06em; text-transform:uppercase;
+    padding:5px 12px; border-radius:20px; cursor:pointer;
+  }
+  .bodymap-toggle button.active{background:var(--sage); color:#fff; border-color:var(--sage);}
+  svg.bodymap{width:100%; max-width:230px; height:auto;}
+  .zone-shape{
+    fill:var(--sage-soft); stroke:var(--sage); stroke-width:1.5;
+    cursor:pointer; transition:fill .12s, stroke-width .12s;
+  }
+  .zone-shape:hover{fill:var(--amber-soft); stroke:var(--amber);}
+  .zone-shape.growth{stroke-dasharray:3 2;}
+  .zone-shape.selected{fill:var(--clay); stroke:var(--clay); }
+  .zone-legend{font-size:11px; color:var(--ink-soft); text-align:center; line-height:1.5; margin-top:2px;}
+  .zone-legend .dash{border-bottom:2px dashed var(--ink-soft); display:inline-block; width:14px; margin:0 3px -2px;}
+  .selected-zone-label{
+    font-family:var(--ink-mono); font-size:13px; font-weight:600;
+    background:var(--turf-dim); border-radius:8px; padding:8px 12px; text-align:center; width:100%;
+    margin-top:4px;
+  }
 
-  .alerte-ligne{background:rgba(196,57,47,.08);border:1px solid rgba(196,57,47,.25);border-radius:8px;padding:8px 10px;font-size:12px;color:#e8a39d;margin-top:6px;}
+  /* pill choices */
+  .pills{display:flex; flex-wrap:wrap; gap:8px;}
+  .pill{
+    border:1.5px solid var(--line); background:var(--turf); color:var(--ink-soft);
+    font-size:13px; font-weight:600; padding:8px 14px; border-radius:20px; cursor:pointer;
+  }
+  .pill.active{background:var(--ink); color:var(--turf); border-color:var(--ink);}
+  .pill.active.type-croissance{background:var(--amber); border-color:var(--amber); color:var(--ink);}
+  .pill.active.type-traumatique{background:var(--clay); border-color:var(--clay); color:#fff;}
+  .pill.active.type-surcharge{background:var(--sage); border-color:var(--sage); color:#fff;}
 
-  /* ACTIONS */
-  .actions-bar{display:flex;gap:10px;margin-bottom:18px;}
-  .actions-bar button{flex:1;background:var(--panneau);border:1px solid var(--ligne);color:var(--texte-att);padding:10px;border-radius:10px;font-size:13px;cursor:pointer;}
-  .actions-bar button:hover{border-color:var(--bleu);color:var(--texte);}
+  /* intensity scale */
+  .intensity-row{display:flex; gap:6px;}
+  .intensity-btn{
+    flex:1; padding:12px 0; text-align:center; border-radius:10px; border:1.5px solid var(--line);
+    background:var(--turf); font-family:var(--ink-mono); font-weight:700; font-size:15px; cursor:pointer;
+    color:var(--ink-soft);
+  }
+  .intensity-btn[data-v="1"].active{background:var(--sage-soft); border-color:var(--sage); color:var(--ink);}
+  .intensity-btn[data-v="2"].active{background:#eef0c8; border-color:#b7bb4a; color:var(--ink);}
+  .intensity-btn[data-v="3"].active{background:var(--amber-soft); border-color:var(--amber); color:var(--ink);}
+  .intensity-btn[data-v="4"].active{background:#f6cdb8; border-color:#e07f4f; color:var(--ink);}
+  .intensity-btn[data-v="5"].active{background:var(--clay-soft); border-color:var(--clay); color:var(--clay);}
+  .intensity-caption{display:flex; justify-content:space-between; font-size:10px; color:var(--ink-soft); margin-top:4px; font-family:var(--ink-mono);}
 
-  .footer-note{text-align:center;color:var(--texte-att);font-size:11.5px;margin-top:26px;line-height:1.5;}
-  .last-update{text-align:right;font-size:11px;color:var(--texte-att);margin-bottom:12px;}
+  .duration-chips{display:flex; flex-wrap:wrap; gap:8px; margin-bottom:10px;}
+  .chip{
+    border:1.5px solid var(--line); background:var(--turf); font-size:12.5px; font-weight:600;
+    padding:7px 12px; border-radius:16px; cursor:pointer; color:var(--ink-soft);
+  }
+  .chip.active{background:var(--sage); border-color:var(--sage); color:#fff;}
+
+  .whoentered{display:flex; gap:8px;}
+  .whoentered button{
+    flex:1; padding:10px; border-radius:10px; border:1.5px solid var(--line); background:var(--turf);
+    font-weight:700; font-size:14px; cursor:pointer; color:var(--ink-soft);
+  }
+  .whoentered button.active{background:var(--ink); color:var(--turf); border-color:var(--ink);}
+
+  button.submit{
+    width:100%; padding:16px; border:none; border-radius:12px; background:var(--clay);
+    color:#fff; font-size:16px; font-weight:800; letter-spacing:.01em; cursor:pointer;
+    margin-top:6px;
+  }
+  button.submit:disabled{background:#bbb; cursor:default;}
+  button.submit:active{transform:translateY(1px);}
+
+  .status-msg{
+    text-align:center; font-size:13px; font-weight:600; margin-top:10px; min-height:18px;
+  }
+  .status-msg.ok{color:var(--sage);}
+  .status-msg.err{color:var(--clay);}
+
+  /* history */
+  .hist-item{
+    display:flex; justify-content:space-between; align-items:flex-start; gap:10px;
+    padding:10px 0; border-bottom:1px solid var(--turf-dim); font-size:13.5px;
+  }
+  .hist-item:last-child{border-bottom:none;}
+  .hist-main{font-weight:700;}
+  .hist-sub{color:var(--ink-soft); font-size:12px; margin-top:2px;}
+  .hist-badge{
+    font-family:var(--ink-mono); font-size:10px; padding:3px 8px; border-radius:6px; white-space:nowrap;
+    background:var(--turf-dim); color:var(--ink-soft);
+  }
+  .hist-badge.recidive{background:var(--clay-soft); color:var(--clay); font-weight:700;}
+  .empty-state{color:var(--ink-soft); font-size:13px; text-align:center; padding:16px 0;}
+  .refresh-link{
+    font-family:var(--ink-mono); font-size:11px; color:var(--ink-soft); text-decoration:underline;
+    background:none; border:none; cursor:pointer; padding:0; float:right;
+  }
 </style>
 </head>
 <body>
-<div class="wrap">
 
-  <div class="header">
-    <span class="tag">Cockpit · U13 Limoges Football</span>
-    <h1>📊 Vue Saison</h1>
-    <div class="date" id="dateAffichee"></div>
+<header class="top">
+  <p class="eyebrow">Cellule jeunes pro · U13</p>
+  <h1>Suivi Blessures &amp; Indisponibilités</h1>
+</header>
+
+<main>
+
+  <div class="page-tabs">
+    <button type="button" class="page-tab-btn active" data-page="saisie">Saisie</button>
+    <button type="button" class="page-tab-btn" data-page="joueur">Historique par joueur</button>
   </div>
 
-  <!-- AUTH -->
-  <div id="ecranAuth">
-    <div class="auth-box">
-      <h2>Accès coach</h2>
-      <input type="tel" inputmode="numeric" maxlength="4" id="inputPIN" placeholder="••••">
-      <button id="btnAuth">Accéder</button>
-      <div class="auth-erreur" id="authErreur">Code incorrect.</div>
-    </div>
-  </div>
+  <div class="page active" id="page-saisie">
 
-  <!-- COCKPIT -->
-  <div id="ecranCockpit" style="display:none;">
-
-    <div class="actions-bar">
-      <button id="btnActualiser">🔄 Actualiser</button>
-      <button id="btnDeconnexion">🔒 Verrouiller</button>
-    </div>
-
-    <!-- CHARGEMENT -->
-    <div class="chargement" id="chargement">
-      <span class="spinner">⚙️</span>
-      Chargement des données…
-    </div>
-
-    <!-- CONTENU -->
-    <div id="contenuCockpit" style="display:none;">
-
-      <div class="last-update" id="lastUpdate"></div>
-
-      <!-- Résumé équipe -->
-      <div class="resume-equipe">
-        <div class="resume-card">
-          <div class="r-val" id="resVert" style="color:var(--vert)">—</div>
-          <div class="r-lbl">🟢 En forme</div>
-        </div>
-        <div class="resume-card">
-          <div class="r-val" id="resOr" style="color:var(--or)">—</div>
-          <div class="r-lbl">🟡 À surveiller</div>
-        </div>
-        <div class="resume-card">
-          <div class="r-val" id="resRouge" style="color:var(--rouge)">—</div>
-          <div class="r-lbl">🔴 À risque</div>
-        </div>
-        <div class="resume-card">
-          <div class="r-val" id="resBlessures" style="color:var(--rouge)">—</div>
-          <div class="r-lbl">🤕 Blessés</div>
-        </div>
+  <form class="card" id="injuryForm">
+    <h2><span class="n">1</span> Joueur &amp; date</h2>
+    <div class="row">
+      <div>
+        <label class="field-label" for="joueur">Joueur</label>
+        <select id="joueur" required>
+          <option value="" disabled selected>Choisir…</option>
+        </select>
       </div>
-
-      <!-- Filtres -->
-      <div class="filtres">
-        <button class="filtre-btn active" data-filtre="tous">Tous</button>
-        <button class="filtre-btn" data-filtre="rouge">🔴 À risque</button>
-        <button class="filtre-btn" data-filtre="or">🟡 À surveiller</button>
-        <button class="filtre-btn" data-filtre="vert">🟢 En forme</button>
-        <button class="filtre-btn" data-filtre="blesse">🤕 Blessés</button>
+      <div>
+        <label class="field-label" for="date">Date du signalement</label>
+        <input type="date" id="date" required>
       </div>
+    </div>
+  </form>
 
-      <!-- Grille joueurs -->
-      <div class="grille-cockpit" id="grilleCockpit"></div>
+  <div class="card">
+    <h2><span class="n">2</span> Zone touchée</h2>
+    <div class="tabbar">
+      <button type="button" class="tab-btn active" data-tab="map">Corps cliquable</button>
+      <button type="button" class="tab-btn" data-tab="list">Liste déroulante</button>
+    </div>
 
+    <div class="tabpane active" id="tab-map">
+      <div class="bodymap-wrap">
+        <div class="bodymap-toggle">
+          <button type="button" class="view-btn active" data-view="front">Avant</button>
+          <button type="button" class="view-btn" data-view="back">Arrière</button>
+        </div>
+        <svg id="svg-front" class="bodymap" viewBox="0 0 200 400" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="100" cy="30" r="22" class="zone-shape" data-zone="tete" />
+          <rect x="70" y="58" width="60" height="80" rx="16" class="zone-shape" data-zone="epaule" />
+          <rect x="42" y="70" width="24" height="70" rx="10" class="zone-shape" data-zone="coude" />
+          <rect x="134" y="70" width="24" height="70" rx="10" class="zone-shape" data-zone="coude" />
+          <rect x="40" y="144" width="20" height="34" rx="8" class="zone-shape" data-zone="poignet_main" />
+          <rect x="140" y="144" width="20" height="34" rx="8" class="zone-shape" data-zone="poignet_main" />
+          <rect x="68" y="140" width="64" height="50" rx="14" class="zone-shape growth" data-zone="hanche_bassin" />
+          <rect x="70" y="192" width="26" height="62" rx="12" class="zone-shape" data-zone="cuisse" />
+          <rect x="104" y="192" width="26" height="62" rx="12" class="zone-shape" data-zone="cuisse" />
+          <circle cx="83" cy="262" r="15" class="zone-shape growth" data-zone="genou_tta" />
+          <circle cx="117" cy="262" r="15" class="zone-shape growth" data-zone="genou_tta" />
+          <rect x="70" y="280" width="24" height="55" rx="10" class="zone-shape" data-zone="tibia_mollet" />
+          <rect x="106" y="280" width="24" height="55" rx="10" class="zone-shape" data-zone="tibia_mollet" />
+          <ellipse cx="82" cy="345" rx="14" ry="10" class="zone-shape" data-zone="cheville" />
+          <ellipse cx="118" cy="345" rx="14" ry="10" class="zone-shape" data-zone="cheville" />
+          <ellipse cx="82" cy="368" rx="16" ry="9" class="zone-shape" data-zone="pied" />
+          <ellipse cx="118" cy="368" rx="16" ry="9" class="zone-shape" data-zone="pied" />
+        </svg>
+        <svg id="svg-back" class="bodymap" viewBox="0 0 200 400" xmlns="http://www.w3.org/2000/svg" style="display:none;">
+          <circle cx="100" cy="30" r="22" class="zone-shape" data-zone="tete" />
+          <rect x="70" y="58" width="60" height="80" rx="16" class="zone-shape" data-zone="epaule" />
+          <rect x="76" y="70" width="48" height="66" rx="12" class="zone-shape growth" data-zone="dos_rachis" />
+          <rect x="42" y="70" width="24" height="70" rx="10" class="zone-shape" data-zone="coude" />
+          <rect x="134" y="70" width="24" height="70" rx="10" class="zone-shape" data-zone="coude" />
+          <rect x="68" y="140" width="64" height="50" rx="14" class="zone-shape growth" data-zone="hanche_bassin" />
+          <rect x="70" y="192" width="26" height="62" rx="12" class="zone-shape" data-zone="ischio" />
+          <rect x="104" y="192" width="26" height="62" rx="12" class="zone-shape" data-zone="ischio" />
+          <circle cx="83" cy="262" r="15" class="zone-shape" data-zone="genou_autre" />
+          <circle cx="117" cy="262" r="15" class="zone-shape" data-zone="genou_autre" />
+          <rect x="70" y="280" width="24" height="55" rx="10" class="zone-shape" data-zone="tibia_mollet" />
+          <rect x="106" y="280" width="24" height="55" rx="10" class="zone-shape" data-zone="tibia_mollet" />
+          <ellipse cx="82" cy="345" rx="14" ry="10" class="zone-shape" data-zone="cheville" />
+          <ellipse cx="118" cy="345" rx="14" ry="10" class="zone-shape" data-zone="cheville" />
+          <ellipse cx="82" cy="370" rx="16" ry="10" class="zone-shape growth" data-zone="talon" />
+          <ellipse cx="118" cy="370" rx="16" ry="10" class="zone-shape growth" data-zone="talon" />
+        </svg>
+        <p class="zone-legend">Contour pointillé <span class="dash"></span> = zone de croissance à surveiller (apophysites, rachis)</p>
+        <div class="selected-zone-label" id="mapSelectedLabel">Aucune zone sélectionnée</div>
+      </div>
+    </div>
+
+    <div class="tabpane" id="tab-list">
+      <label class="field-label" for="zoneSelect">Zone anatomique</label>
+      <select id="zoneSelect">
+        <option value="" disabled selected>Choisir une zone…</option>
+      </select>
     </div>
   </div>
 
-  <div class="footer-note">
-    Données agrégées depuis Météo · RPE · Match Day · Blessures<br>
-    Mise à jour à chaque actualisation
+  <div class="card">
+    <h2><span class="n">3</span> Intensité</h2>
+    <div class="intensity-row" id="intensityRow">
+      <button type="button" class="intensity-btn" data-v="1">1</button>
+      <button type="button" class="intensity-btn" data-v="2">2</button>
+      <button type="button" class="intensity-btn" data-v="3">3</button>
+      <button type="button" class="intensity-btn" data-v="4">4</button>
+      <button type="button" class="intensity-btn" data-v="5">5</button>
+    </div>
+    <div class="intensity-caption"><span>Gêne légère</span><span>Douleur invalidante</span></div>
   </div>
 
-</div>
+  <div class="card">
+    <h2><span class="n">4</span> Type &amp; cause</h2>
+    <label class="field-label">Type</label>
+    <div class="pills" id="typePills" style="margin-bottom:14px;">
+      <button type="button" class="pill" data-type="traumatique">Traumatique</button>
+      <button type="button" class="pill" data-type="surcharge">Surcharge</button>
+      <button type="button" class="pill" data-type="croissance">Croissance</button>
+      <button type="button" class="pill" data-type="autre">Autre</button>
+    </div>
+    <label class="field-label" for="cause">Circonstance (optionnel)</label>
+    <textarea id="cause" placeholder="Ex : douleur ressentie après le match, choc à l'entraînement…"></textarea>
+  </div>
+
+  <div class="card">
+    <h2><span class="n">5</span> Durée estimée d'indisponibilité</h2>
+    <div class="duration-chips" id="durationChips">
+      <button type="button" class="chip" data-days="0">Aucune (joue quand même)</button>
+      <button type="button" class="chip" data-days="2">1-3 j</button>
+      <button type="button" class="chip" data-days="5">4-7 j</button>
+      <button type="button" class="chip" data-days="10">1-2 sem</button>
+      <button type="button" class="chip" data-days="21">2-4 sem</button>
+      <button type="button" class="chip" data-days="-1">Saison / inconnu</button>
+    </div>
+    <label class="field-label" for="dureeCustom">ou nombre de jours précis</label>
+    <input type="number" id="dureeCustom" min="0" placeholder="Ex : 8">
+  </div>
+
+  <div class="card">
+    <h2><span class="n">6</span> Saisi par</h2>
+    <div class="whoentered" id="whoEntered">
+      <button type="button" data-who="Moi">Moi</button>
+      <button type="button" data-who="Tom">Tom</button>
+    </div>
+  </div>
+
+  <button class="submit" id="submitBtn" type="button">Enregistrer le signalement</button>
+  <p class="status-msg" id="statusMsg"></p>
+
+  <div class="card" style="margin-top:22px;">
+    <h2>Historique récent <button class="refresh-link" id="refreshHist">↻ actualiser</button></h2>
+    <div id="histList"><p class="empty-state">Chargement…</p></div>
+  </div>
+
+  </div><!-- /page-saisie -->
+
+  <div class="page" id="page-joueur">
+
+    <div class="card">
+      <h2>Choisir un joueur</h2>
+      <div class="pills" id="playerPicker"></div>
+    </div>
+
+    <div class="card" id="playerHistCard" style="display:none;">
+      <h2 id="playerHistTitle">Historique de la saison</h2>
+      <div class="bodymap-wrap">
+        <div class="bodymap-toggle">
+          <button type="button" class="view-btn-hist active" data-view="front">Avant</button>
+          <button type="button" class="view-btn-hist" data-view="back">Arrière</button>
+        </div>
+        <svg id="svg-front-hist" class="bodymap" viewBox="0 0 200 400" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="100" cy="30" r="22" class="zone-shape" data-zone="tete" />
+          <rect x="70" y="58" width="60" height="80" rx="16" class="zone-shape" data-zone="epaule" />
+          <rect x="42" y="70" width="24" height="70" rx="10" class="zone-shape" data-zone="coude" />
+          <rect x="134" y="70" width="24" height="70" rx="10" class="zone-shape" data-zone="coude" />
+          <rect x="40" y="144" width="20" height="34" rx="8" class="zone-shape" data-zone="poignet_main" />
+          <rect x="140" y="144" width="20" height="34" rx="8" class="zone-shape" data-zone="poignet_main" />
+          <rect x="68" y="140" width="64" height="50" rx="14" class="zone-shape growth" data-zone="hanche_bassin" />
+          <rect x="70" y="192" width="26" height="62" rx="12" class="zone-shape" data-zone="cuisse" />
+          <rect x="104" y="192" width="26" height="62" rx="12" class="zone-shape" data-zone="cuisse" />
+          <circle cx="83" cy="262" r="15" class="zone-shape growth" data-zone="genou_tta" />
+          <circle cx="117" cy="262" r="15" class="zone-shape growth" data-zone="genou_tta" />
+          <rect x="70" y="280" width="24" height="55" rx="10" class="zone-shape" data-zone="tibia_mollet" />
+          <rect x="106" y="280" width="24" height="55" rx="10" class="zone-shape" data-zone="tibia_mollet" />
+          <ellipse cx="82" cy="345" rx="14" ry="10" class="zone-shape" data-zone="cheville" />
+          <ellipse cx="118" cy="345" rx="14" ry="10" class="zone-shape" data-zone="cheville" />
+          <ellipse cx="82" cy="368" rx="16" ry="9" class="zone-shape" data-zone="pied" />
+          <ellipse cx="118" cy="368" rx="16" ry="9" class="zone-shape" data-zone="pied" />
+        </svg>
+        <svg id="svg-back-hist" class="bodymap" viewBox="0 0 200 400" xmlns="http://www.w3.org/2000/svg" style="display:none;">
+          <circle cx="100" cy="30" r="22" class="zone-shape" data-zone="tete" />
+          <rect x="70" y="58" width="60" height="80" rx="16" class="zone-shape" data-zone="epaule" />
+          <rect x="76" y="70" width="48" height="66" rx="12" class="zone-shape growth" data-zone="dos_rachis" />
+          <rect x="42" y="70" width="24" height="70" rx="10" class="zone-shape" data-zone="coude" />
+          <rect x="134" y="70" width="24" height="70" rx="10" class="zone-shape" data-zone="coude" />
+          <rect x="68" y="140" width="64" height="50" rx="14" class="zone-shape growth" data-zone="hanche_bassin" />
+          <rect x="70" y="192" width="26" height="62" rx="12" class="zone-shape" data-zone="ischio" />
+          <rect x="104" y="192" width="26" height="62" rx="12" class="zone-shape" data-zone="ischio" />
+          <circle cx="83" cy="262" r="15" class="zone-shape" data-zone="genou_autre" />
+          <circle cx="117" cy="262" r="15" class="zone-shape" data-zone="genou_autre" />
+          <rect x="70" y="280" width="24" height="55" rx="10" class="zone-shape" data-zone="tibia_mollet" />
+          <rect x="106" y="280" width="24" height="55" rx="10" class="zone-shape" data-zone="tibia_mollet" />
+          <ellipse cx="82" cy="345" rx="14" ry="10" class="zone-shape" data-zone="cheville" />
+          <ellipse cx="118" cy="345" rx="14" ry="10" class="zone-shape" data-zone="cheville" />
+          <ellipse cx="82" cy="370" rx="16" ry="10" class="zone-shape growth" data-zone="talon" />
+          <ellipse cx="118" cy="370" rx="16" ry="10" class="zone-shape growth" data-zone="talon" />
+        </svg>
+        <p class="zone-legend">
+          <span class="dot dot-0"></span> aucune ·
+          <span class="dot dot-1"></span> 1 fois ·
+          <span class="dot dot-2"></span> 2 fois ou plus — clique une zone colorée pour voir le détail
+        </p>
+        <div id="playerZoneDetail" class="selected-zone-label">Sélectionne une zone colorée pour voir les dates.</div>
+      </div>
+    </div>
+
+    <div class="card" id="playerNoData" style="display:none;">
+      <p class="empty-state">Aucune blessure signalée cette saison pour ce joueur.</p>
+    </div>
+
+  </div><!-- /page-joueur -->
+
+</main>
+
 <script>
-(function(){
+/* ====================== CONFIGURATION ====================== */
+// Colle ici l'URL de ton déploiement Apps Script (voir Code.gs fourni séparément)
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycby1AFv80LuZ9lDI1jK22YOwFLhccuX6V2AU3LVVT15qHQKWFi62b_HTKZOSop6Exn2t/exec";
 
-  var CODE_PIN = "0501";
-  var SESSION_KEY = "cockpit_auth";
+// Liste de l'effectif — à adapter
+const PLAYERS = [
+  "Hadi","Sebastien","Mickaël","Bakoutoubo","Sacha","Keys","Nourou",
+  "Yanis","Mathis","Ethan","Abdoul Karim","Jalil","Gabin","Adam",
+  "Kalifa","Bilel","Pablo","Melih","Issam","Emir","Loan","Sarah"
+];
 
-  var URL_METEO    = "https://script.google.com/macros/s/AKfycby9nP9dZjcJHINPigF8_cBBbBEcRXk-buyNKW6vvs4zpnz2e9UYXzB8OzzCuLg5C9A73g/exec";
-  var URL_RPE      = "https://script.google.com/macros/s/AKfycbxpcsBjwqNDR7LkbT53krZK2d29iQlDzpOUovqD2FCnEGHjENNWE6orj6upb7PtHrLo/exec";
-  var URL_MATCHDAY = "https://script.google.com/macros/s/AKfycbzYTdTfQWN9CCujM7p4JwNplNgmOIz9HyA1hv609FQWiQeRXlYE3h-Xj40ekKI5Wpwpaw/exec";
-  var URL_BLESSURE = "https://script.google.com/macros/s/AKfycby1AFv80LuZ9lDI1jK22YOwFLhccuX6V2AU3LVVT15qHQKWFi62b_HTKZOSop6Exn2t/exec";
+// Zones anatomiques : id -> {label, growth}
+const ZONES = {
+  tete:            {label:"Tête", growth:false},
+  epaule:          {label:"Épaule", growth:false},
+  coude:           {label:"Coude", growth:false},
+  poignet_main:    {label:"Poignet / Main", growth:false},
+  dos_rachis:      {label:"Dos / Rachis", growth:true},
+  hanche_bassin:   {label:"Hanche / Bassin", growth:true},
+  ischio:          {label:"Ischio-jambiers", growth:false},
+  cuisse:          {label:"Cuisse / Quadriceps", growth:false},
+  genou_tta:       {label:"Genou — avant (tubérosité tibiale antérieure)", growth:true},
+  genou_autre:     {label:"Genou — autre (ligament, ménisque…)", growth:false},
+  tibia_mollet:    {label:"Tibia / Mollet", growth:false},
+  cheville:        {label:"Cheville", growth:false},
+  talon:           {label:"Talon (arrière calcanéen)", growth:true},
+  pied:            {label:"Pied", growth:false},
+  autre:           {label:"Autre / non listé", growth:false}
+};
+/* ============================================================= */
 
-  var EFFECTIF = ["Abdoul Karim","Adam","Bakoutoubo","Bilel","Emir","Ethan","Gabin","Hadi","Issam","Jalil","Kalifa","Keys","Loan","Mathis","Melih","Mickaël","Nourou","Pablo","Sacha","Sarah","Sebastien","Yanis"];
+const state = { zone:null, intensity:null, type:null, duree:null, who:null };
 
-  var moisFr = ["janvier","février","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","décembre"];
-  var joursFr = ["dimanche","lundi","mardi","mercredi","jeudi","vendredi","samedi"];
-  function formatDate(d){ return joursFr[d.getDay()]+" "+d.getDate()+" "+moisFr[d.getMonth()]+" "+d.getFullYear(); }
-  function clefISO(d){ return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); }
-  function normalDate(str){
-    if(!str) return "";
-    if(typeof str === "object") str = str.toString();
-    // Format Google Apps Script : "Fri Jul 25 2026 00:00:00 GMT+0200..."
-    // On parse avec Date() et on reformate en YYYY-MM-DD
-    if(str.length > 10){
-      try{
-        var d = new Date(str);
-        if(!isNaN(d.getTime())){
-          // Utiliser l'heure locale pour extraire la date
-          var year = d.getFullYear();
-          var month = String(d.getMonth()+1).padStart(2,"0");
-          var day = String(d.getDate()).padStart(2,"0");
-          return year+"-"+month+"-"+day;
-        }
-      }catch(e){}
-      return str.substring(0,10);
+// --- init selects ---
+const joueurSelect = document.getElementById('joueur');
+PLAYERS.forEach(p=>{
+  const o=document.createElement('option'); o.value=p; o.textContent=p; joueurSelect.appendChild(o);
+});
+const zoneSelect = document.getElementById('zoneSelect');
+Object.entries(ZONES).forEach(([id,z])=>{
+  const o=document.createElement('option'); o.value=id;
+  o.textContent = z.label + (z.growth ? " ⚠ croissance" : "");
+  zoneSelect.appendChild(o);
+});
+zoneSelect.addEventListener('change', ()=>{
+  setZone(zoneSelect.value);
+});
+
+document.getElementById('date').valueAsDate = new Date();
+
+// --- page-level tabs (Saisie / Historique par joueur) ---
+document.querySelectorAll('.page-tab-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.page-tab-btn').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('page-'+btn.dataset.page).classList.add('active');
+    if(btn.dataset.page==='joueur'){ openPlayerHistoryPage(); }
+  });
+});
+
+// --- tabs ---
+document.querySelectorAll('.tab-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.tabpane').forEach(p=>p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-'+btn.dataset.tab).classList.add('active');
+  });
+});
+
+// --- body map view toggle ---
+document.querySelectorAll('.view-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.view-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('svg-front').style.display = btn.dataset.view==='front' ? 'block':'none';
+    document.getElementById('svg-back').style.display = btn.dataset.view==='back' ? 'block':'none';
+  });
+});
+
+// --- body map click ---
+document.querySelectorAll('#tab-map .zone-shape').forEach(shape=>{
+  shape.addEventListener('click', ()=>{
+    setZone(shape.dataset.zone);
+  });
+});
+
+function setZone(zoneId){
+  state.zone = zoneId;
+  document.querySelectorAll('#tab-map .zone-shape').forEach(s=>{
+    s.classList.toggle('selected', s.dataset.zone===zoneId);
+  });
+  zoneSelect.value = zoneId;
+  const z = ZONES[zoneId];
+  document.getElementById('mapSelectedLabel').textContent = z
+    ? z.label + (z.growth ? " — zone de croissance ⚠" : "")
+    : "Aucune zone sélectionnée";
+}
+
+// --- intensity ---
+document.querySelectorAll('.intensity-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.intensity-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    state.intensity = parseInt(btn.dataset.v,10);
+  });
+});
+
+// --- type pills ---
+document.querySelectorAll('#typePills .pill').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('#typePills .pill').forEach(b=>b.classList.remove('active','type-traumatique','type-surcharge','type-croissance'));
+    btn.classList.add('active','type-'+btn.dataset.type);
+    state.type = btn.dataset.type;
+  });
+});
+
+// --- duration chips ---
+document.querySelectorAll('#durationChips .chip').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('#durationChips .chip').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    state.duree = parseInt(btn.dataset.days,10);
+    document.getElementById('dureeCustom').value = '';
+  });
+});
+document.getElementById('dureeCustom').addEventListener('input', (e)=>{
+  document.querySelectorAll('#durationChips .chip').forEach(b=>b.classList.remove('active'));
+  state.duree = e.target.value ? parseInt(e.target.value,10) : null;
+});
+
+// --- who entered ---
+document.querySelectorAll('#whoEntered button').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('#whoEntered button').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    state.who = btn.dataset.who;
+  });
+});
+
+// --- submit ---
+document.getElementById('submitBtn').addEventListener('click', async ()=>{
+  const joueur = joueurSelect.value;
+  const date = document.getElementById('date').value;
+  const cause = document.getElementById('cause').value;
+  const statusEl = document.getElementById('statusMsg');
+
+  if(!joueur){ return showStatus("Choisis un joueur.", false); }
+  if(!state.zone){ return showStatus("Sélectionne une zone (carte ou liste).", false); }
+  if(!state.intensity){ return showStatus("Indique l'intensité.", false); }
+  if(!state.type){ return showStatus("Choisis un type (traumatique / surcharge / croissance / autre).", false); }
+  if(state.duree===null || state.duree===undefined || isNaN(state.duree)){ return showStatus("Indique une durée estimée.", false); }
+  if(!state.who){ return showStatus("Indique qui saisit (Moi / Tom).", false); }
+
+  const payload = {
+    date, joueur,
+    zone: state.zone, zoneLabel: ZONES[state.zone].label, zoneCroissance: !!ZONES[state.zone].growth,
+    intensite: state.intensity,
+    type: state.type,
+    cause,
+    dureeJours: state.duree,
+    saisiPar: state.who
+  };
+
+  const btn = document.getElementById('submitBtn');
+  btn.disabled = true; btn.textContent = "Enregistrement…";
+
+  try{
+    if(APPS_SCRIPT_URL.includes("COLLER_ICI")){
+      throw new Error("URL Apps Script non configurée.");
     }
-    return str;
+    await fetch(APPS_SCRIPT_URL, {
+      method:'POST',
+      headers:{'Content-Type':'text/plain;charset=utf-8'},
+      body: JSON.stringify(payload)
+    });
+    showStatus("Signalement enregistré ✓", true);
+    resetForm();
+    loadHistory();
+  }catch(err){
+    showStatus("Erreur d'envoi : " + err.message, false);
+  }finally{
+    btn.disabled=false; btn.textContent="Enregistrer le signalement";
   }
+});
 
-  document.getElementById("dateAffichee").textContent = formatDate(new Date());
+function showStatus(msg, ok){
+  const el = document.getElementById('statusMsg');
+  el.textContent = msg;
+  el.className = 'status-msg ' + (ok?'ok':'err');
+}
 
-  var filtreActif = "tous";
-  var donneesCockpit = null;
+function resetForm(){
+  joueurSelect.value='';
+  zoneSelect.value='';
+  state.zone=null; state.intensity=null; state.type=null; state.duree=null;
+  document.getElementById('mapSelectedLabel').textContent="Aucune zone sélectionnée";
+  document.querySelectorAll('#tab-map .zone-shape').forEach(s=>s.classList.remove('selected'));
+  document.querySelectorAll('.intensity-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('#typePills .pill').forEach(b=>b.classList.remove('active','type-traumatique','type-surcharge','type-croissance'));
+  document.querySelectorAll('#durationChips .chip').forEach(b=>b.classList.remove('active'));
+  document.getElementById('dureeCustom').value='';
+  document.getElementById('cause').value='';
+}
 
-  // ---- AUTH ----
-  var inputPIN = document.getElementById("inputPIN");
-  inputPIN.addEventListener("input", function(){ this.value=this.value.replace(/[^0-9]/g,"").slice(0,4); });
+// --- history / recurrence ---
+async function loadHistory(){
+  const el = document.getElementById('histList');
+  if(APPS_SCRIPT_URL.includes("COLLER_ICI")){
+    el.innerHTML = '<p class="empty-state">Configure l\'URL Apps Script pour afficher l\'historique.</p>';
+    return;
+  }
+  el.innerHTML = '<p class="empty-state">Chargement…</p>';
+  try{
+    const res = await fetch(APPS_SCRIPT_URL + '?action=list');
+    const rows = await res.json();
+    if(!rows.length){ el.innerHTML='<p class="empty-state">Aucun signalement pour le moment.</p>'; return; }
 
-  document.getElementById("btnAuth").addEventListener("click", function(){
-    if(inputPIN.value.trim() !== CODE_PIN){
-      document.getElementById("authErreur").style.display="block";
+    // recurrence: same player+zone within 21 days of another entry
+    rows.forEach((r,i)=>{
+      r.recidive = rows.some((other,j)=> j!==i && other.joueur===r.joueur && other.zone===r.zone
+        && Math.abs((new Date(r.date)-new Date(other.date))/86400000) <= 21 && new Date(other.date) < new Date(r.date));
+    });
+
+    el.innerHTML = rows.slice(0,15).map(r=>`
+      <div class="hist-item">
+        <div>
+          <div class="hist-main">${r.joueur} — ${r.zoneLabel||r.zone}</div>
+          <div class="hist-sub">${r.date} · intensité ${r.intensite}/5 · ${r.type} · ${r.dureeJours<0?'saison/inconnu':r.dureeJours+' j'} · saisi par ${r.saisiPar}</div>
+        </div>
+        <span class="hist-badge ${r.recidive?'recidive':''}">${r.recidive?'⚠ récidive':(r.zoneCroissance?'croissance':'')}</span>
+      </div>
+    `).join('');
+  }catch(err){
+    el.innerHTML = '<p class="empty-state">Impossible de charger l\'historique.</p>';
+  }
+}
+document.getElementById('refreshHist').addEventListener('click', loadHistory);
+loadHistory();
+
+/* ================= Historique par joueur ================= */
+let allInjuriesCache = null;
+let selectedPlayer = null;
+let currentByZone = {};
+
+// build player chips
+const playerPicker = document.getElementById('playerPicker');
+PLAYERS.forEach(p=>{
+  const b = document.createElement('button');
+  b.type='button'; b.className='pill'; b.textContent=p;
+  b.addEventListener('click', ()=>{
+    document.querySelectorAll('#playerPicker .pill').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active');
+    selectedPlayer = p;
+    renderPlayerHistory();
+  });
+  playerPicker.appendChild(b);
+});
+
+// front/back toggle for the history body map
+document.querySelectorAll('.view-btn-hist').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.view-btn-hist').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('svg-front-hist').style.display = btn.dataset.view==='front' ? 'block':'none';
+    document.getElementById('svg-back-hist').style.display = btn.dataset.view==='back' ? 'block':'none';
+  });
+});
+
+// zone click on the history body map -> show dates for that zone
+document.querySelectorAll('#page-joueur .zone-shape').forEach(shape=>{
+  shape.addEventListener('click', ()=>{
+    const zid = shape.dataset.zone;
+    const list = currentByZone[zid] || [];
+    const detail = document.getElementById('playerZoneDetail');
+    if(!list.length){
+      detail.textContent = (ZONES[zid]?ZONES[zid].label:zid) + " — aucune blessure signalée à cette zone.";
       return;
     }
-    sessionStorage.setItem(SESSION_KEY, "1");
-    ouvrirCockpit();
+    const label = ZONES[zid] ? ZONES[zid].label : zid;
+    detail.innerHTML = `<strong>${label}</strong> — ${list.length} signalement${list.length>1?'s':''} :<br>` +
+      list.map(r=>`${r.date} · intensité ${r.intensite}/5 · ${r.type}${r.dureeJours>=0 ? ' · '+r.dureeJours+' j' : ''}`).join('<br>');
+  });
+});
+
+async function fetchAllInjuries(){
+  if(allInjuriesCache) return allInjuriesCache;
+  if(APPS_SCRIPT_URL.includes("COLLER_ICI")) return [];
+  try{
+    const res = await fetch(APPS_SCRIPT_URL + '?action=list');
+    allInjuriesCache = await res.json();
+  }catch(err){
+    allInjuriesCache = [];
+  }
+  return allInjuriesCache;
+}
+
+async function openPlayerHistoryPage(){
+  allInjuriesCache = null; // toujours recharger à l'ouverture de l'onglet
+  await fetchAllInjuries();
+  if(selectedPlayer) renderPlayerHistory();
+}
+
+async function renderPlayerHistory(){
+  const histCard = document.getElementById('playerHistCard');
+  const noData = document.getElementById('playerNoData');
+  const titleEl = document.getElementById('playerHistTitle');
+  titleEl.textContent = "Historique de la saison — " + selectedPlayer;
+
+  const all = await fetchAllInjuries();
+  const records = all.filter(r=>r.joueur===selectedPlayer);
+
+  currentByZone = {};
+  records.forEach(r=>{ (currentByZone[r.zone] = currentByZone[r.zone]||[]).push(r); });
+
+  if(!records.length){
+    histCard.style.display='none';
+    noData.style.display='block';
+    return;
+  }
+  noData.style.display='none';
+  histCard.style.display='block';
+
+  document.querySelectorAll('#page-joueur .zone-shape').forEach(shape=>{
+    const zid = shape.dataset.zone;
+    const count = (currentByZone[zid]||[]).length;
+    shape.classList.remove('selected');
+    if(count>=2){ shape.style.fill='var(--clay)'; shape.style.stroke='var(--clay)'; shape.style.cursor='pointer'; }
+    else if(count===1){ shape.style.fill='var(--amber)'; shape.style.stroke='var(--amber)'; shape.style.cursor='pointer'; }
+    else { shape.style.fill='var(--turf-dim)'; shape.style.stroke='var(--line)'; shape.style.cursor='default'; }
   });
 
-  // Auto-connexion si session active
-  if(sessionStorage.getItem(SESSION_KEY)==="1") ouvrirCockpit();
-
-  function ouvrirCockpit(){
-    document.getElementById("ecranAuth").style.display="none";
-    document.getElementById("ecranCockpit").style.display="block";
-    chargerTout();
-  }
-
-  document.getElementById("btnDeconnexion").addEventListener("click", function(){
-    sessionStorage.removeItem(SESSION_KEY);
-    location.reload();
-  });
-
-  document.getElementById("btnActualiser").addEventListener("click", chargerTout);
-
-  // ---- FILTRES ----
-  document.querySelectorAll(".filtre-btn").forEach(function(btn){
-    btn.addEventListener("click", function(){
-      document.querySelectorAll(".filtre-btn").forEach(function(b){ b.classList.remove("active"); });
-      btn.classList.add("active");
-      filtreActif = btn.getAttribute("data-filtre");
-      if(donneesCockpit) afficherCockpit(donneesCockpit);
-    });
-  });
-
-  // ---- CHARGEMENT DONNÉES ----
-  function chargerTout(){
-    document.getElementById("chargement").style.display="block";
-    document.getElementById("contenuCockpit").style.display="none";
-
-    Promise.all([
-      fetch(URL_METEO).then(function(r){ return r.json(); }).catch(function(){ return []; }),
-      fetch(URL_RPE+"?type=rpe_post").then(function(r){ return r.json(); }).then(function(d){
-        return Array.isArray(d) ? d : [];
-      }).catch(function(){ return []; }),
-      fetch(URL_MATCHDAY+"?type=hooper").then(function(r){ return r.json(); }).catch(function(){ return []; }),
-      fetch(URL_BLESSURE).then(function(r){ return r.json(); }).then(function(d){
-        // Si le script renvoie un objet unique (pas un tableau), on retourne tableau vide
-        return Array.isArray(d) ? d : [];
-      }).catch(function(){ return []; })
-    ]).then(function(resultats){
-      var data = {
-        meteo: resultats[0],
-        rpe: resultats[1],
-        hooper: resultats[2],
-        blessures: resultats[3]
-      };
-      donneesCockpit = analyserDonnees(data);
-      afficherCockpit(donneesCockpit);
-      document.getElementById("lastUpdate").textContent = "Mis à jour à " + new Date().toLocaleTimeString("fr-FR", {hour:"2-digit",minute:"2-digit"});
-    }).catch(function(){
-      document.getElementById("chargement").innerHTML = '<div style="color:var(--texte-att);padding:30px;text-align:center;">Impossible de charger certaines données. Vérifiez votre connexion.</div>';
-    });
-  }
-
-  // ---- ANALYSE ----
-  function analyserDonnees(data){
-    var aujourd_hui = new Date();
-    var joueurs = {};
-
-    EFFECTIF.forEach(function(nom){
-      joueurs[nom] = {
-        nom: nom,
-        meteo: { dernieres: [], moyenne: null },
-        rpe: { dernieres: [], moyenne: null, alerteIntense: false },
-        hooper: { dernier: null, moyenne: null },
-        blessure: { actuelle: null, joursAbsence: 0 },
-        risque: "vert",
-        alertes: []
-      };
-    });
-
-    // MÉTÉO : 4 dernières séances par joueur
-    var meteoParJoueur = {};
-    (data.meteo||[]).forEach(function(d){
-      var nom = d.nom; var n = parseInt(d.niveau,10);
-      if(!meteoParJoueur[nom]) meteoParJoueur[nom] = [];
-      meteoParJoueur[nom].push({date: normalDate(d.date), heure: d.heure, niveau: n});
-    });
-    Object.keys(meteoParJoueur).forEach(function(nom){
-      if(!joueurs[nom]) return;
-      var tri = meteoParJoueur[nom].sort(function(a,b){ return a.date<b.date?1:-1; }).slice(0,8);
-      joueurs[nom].meteo.dernieres = tri;
-      if(tri.length>0){
-        var somme=0; tri.slice(0,4).forEach(function(d){ somme+=d.niveau; });
-        joueurs[nom].meteo.moyenne = (somme/Math.min(tri.length,4)).toFixed(1);
-      }
-    });
-
-    // RPE : 4 dernières séances
-    var rpeParJoueur = {};
-    (data.rpe||[]).forEach(function(d){
-      var nom=d.nom; var n=parseInt(d.rpe,10);
-      if(!rpeParJoueur[nom]) rpeParJoueur[nom]=[];
-      rpeParJoueur[nom].push({date:normalDate(d.date), rpe:n});
-    });
-    Object.keys(rpeParJoueur).forEach(function(nom){
-      if(!joueurs[nom]) return;
-      var tri = rpeParJoueur[nom].sort(function(a,b){ return a.date<b.date?1:-1; }).slice(0,8);
-      joueurs[nom].rpe.dernieres = tri;
-      if(tri.length>0){
-        var somme=0; tri.slice(0,4).forEach(function(d){ somme+=d.rpe; });
-        joueurs[nom].rpe.moyenne = (somme/Math.min(tri.length,4)).toFixed(1);
-        // Alerte : 2 RPE ≥ 8 sur les 3 dernières séances
-        var recentes = tri.slice(0,3);
-        var nbIntense = recentes.filter(function(d){ return d.rpe>=8; }).length;
-        if(nbIntense>=2) joueurs[nom].rpe.alerteIntense=true;
-      }
-    });
-
-    // HOOPER : dernier score et moyenne
-    var hooperParJoueur = {};
-    (data.hooper||[]).forEach(function(d){
-      if(d.palier==="_verif") return;
-      var nom=d.nom;
-      if(!hooperParJoueur[nom]) hooperParJoueur[nom]=[];
-      var total = (parseInt(d.sommeil,10)||0)+(parseInt(d.fatigue,10)||0)+(parseInt(d.humeur,10)||0)+(parseInt(d.douleurs,10)||0)+(parseInt(d.motivation,10)||0);
-      hooperParJoueur[nom].push({date:normalDate(d.date), total:total, detail:d});
-    });
-    Object.keys(hooperParJoueur).forEach(function(nom){
-      if(!joueurs[nom]) return;
-      var tri = hooperParJoueur[nom].sort(function(a,b){ return a.date<b.date?1:-1; });
-      joueurs[nom].hooper.dernier = tri[0]||null;
-      if(tri.length>0){
-        var somme=0; tri.slice(0,5).forEach(function(d){ somme+=d.total; });
-        joueurs[nom].hooper.moyenne = (somme/Math.min(tri.length,5)).toFixed(1);
-      }
-    });
-
-    // BLESSURES
-    (data.blessures||[]).forEach(function(d){
-      var nom=d.nom||d.joueur;
-      if(!joueurs[nom]) return;
-      // Chercher blessure active (sans date de retour ou date retour dans le futur)
-      var dateRetour = d.date_retour||d.retour||"";
-      var actif = !dateRetour || normalDate(dateRetour) > clefISO(aujourd_hui);
-      if(actif && !joueurs[nom].blessure.actuelle){
-        joueurs[nom].blessure.actuelle = d;
-      }
-      // Compter jours d'absence sur la saison
-      if(d.date_debut||d.date){
-        var debut = new Date((d.date_debut||d.date)+"T12:00:00");
-        var fin = dateRetour ? new Date(dateRetour+"T12:00:00") : aujourd_hui;
-        var jours = Math.max(0, Math.round((fin-debut)/86400000));
-        joueurs[nom].blessure.joursAbsence += jours;
-      }
-    });
-
-    // CALCUL DU RISQUE GLOBAL
-    EFFECTIF.forEach(function(nom){
-      var j = joueurs[nom];
-      var score = 0; // Plus c'est élevé, plus c'est risqué
-
-      if(j.blessure.actuelle){ j.risque="rouge"; j.alertes.push("🤕 Blessure en cours"); return; }
-
-      var moyMeteo = parseFloat(j.meteo.moyenne);
-      var moyRPE = parseFloat(j.rpe.moyenne);
-      var moyHooper = parseFloat(j.hooper.moyenne);
-
-      if(!isNaN(moyMeteo)){
-        if(moyMeteo>=4) score+=3;
-        else if(moyMeteo>=3) score+=1;
-      }
-      if(!isNaN(moyRPE)){
-        if(moyRPE>=8) score+=2;
-        else if(moyRPE>=6.5) score+=1;
-      }
-      if(j.rpe.alerteIntense){ score+=2; j.alertes.push("⚡ RPE ≥ 8 deux fois récemment"); }
-      if(!isNaN(moyHooper)){
-        if(moyHooper>=18) score+=3;
-        else if(moyHooper>=14) score+=1;
-      }
-      if(j.blessure.joursAbsence>=14) score+=1;
-
-      if(score>=5) j.risque="rouge";
-      else if(score>=2) j.risque="or";
-      else j.risque="vert";
-
-      if(!isNaN(moyMeteo) && moyMeteo>=4) j.alertes.push("😴 Fatigue élevée en séance (météo moy. "+moyMeteo+")");
-      if(!isNaN(moyHooper) && moyHooper>=18) j.alertes.push("📋 Score Hooper préoccupant ("+moyHooper+"/25)");
-    });
-
-    return joueurs;
-  }
-
-  // ---- AFFICHAGE ----
-  function afficherCockpit(joueurs){
-    document.getElementById("chargement").style.display="none";
-    document.getElementById("contenuCockpit").style.display="block";
-
-    var nbVert=0,nbOr=0,nbRouge=0,nbBlesses=0;
-    EFFECTIF.forEach(function(nom){
-      var j=joueurs[nom];
-      if(j.blessure.actuelle) nbBlesses++;
-      if(j.risque==="vert") nbVert++;
-      else if(j.risque==="or") nbOr++;
-      else nbRouge++;
-    });
-    document.getElementById("resVert").textContent=nbVert;
-    document.getElementById("resOr").textContent=nbOr;
-    document.getElementById("resRouge").textContent=nbRouge;
-    document.getElementById("resBlessures").textContent=nbBlesses;
-
-    var liste = EFFECTIF.filter(function(nom){
-      var j=joueurs[nom];
-      if(filtreActif==="tous") return true;
-      if(filtreActif==="blesse") return !!j.blessure.actuelle;
-      return j.risque===filtreActif;
-    });
-
-    // Trier : rouge d'abord, puis or, puis vert
-    liste.sort(function(a,b){
-      var ordre={rouge:0,or:1,vert:2};
-      return ordre[joueurs[a].risque]-ordre[joueurs[b].risque];
-    });
-
-    var grille=document.getElementById("grilleCockpit");
-    grille.innerHTML="";
-
-    liste.forEach(function(nom){
-      var j=joueurs[nom];
-      var emojis={vert:"🟢",or:"🟡",rouge:"🔴"};
-
-      var card=document.createElement("div");
-      card.className="joueur-cockpit risque-"+j.risque;
-
-      // Métriques
-      var moyMeteo = j.meteo.moyenne!==null ? j.meteo.moyenne : "—";
-      var moyRPE   = j.rpe.moyenne!==null   ? j.rpe.moyenne   : "—";
-      var hooScore = j.hooper.dernier        ? j.hooper.dernier.total+"/25" : "—";
-      var hooMoy   = j.hooper.moyenne!==null ? j.hooper.moyenne : null;
-
-      var classeMeteo="m-gris", classeRPE="m-gris", classeHooper="m-gris";
-      if(j.meteo.moyenne!==null){
-        var m=parseFloat(j.meteo.moyenne);
-        classeMeteo = m<=2?"m-vert":m<=3?"m-or":"m-rouge";
-      }
-      if(j.rpe.moyenne!==null){
-        var r=parseFloat(j.rpe.moyenne);
-        classeRPE = r<=5?"m-vert":r<=7?"m-or":"m-rouge";
-      }
-      if(j.hooper.moyenne!==null){
-        var h=parseFloat(j.hooper.moyenne);
-        classeHooper = h<=10?"m-vert":h<=16?"m-or":"m-rouge";
-      }
-
-      // Historique météo mini (8 dernières)
-      var histoMeteo="";
-      j.meteo.dernieres.slice(0,6).forEach(function(d){
-        histoMeteo+='<div class="histo-point nv'+d.niveau+'">'+d.niveau+'</div>';
-      });
-
-      // Historique RPE mini
-      var histoRPE="";
-      j.rpe.dernieres.slice(0,6).forEach(function(d){
-        var cls = d.rpe<=5?"rpe-bas":d.rpe<=7?"rpe-moy":"rpe-haut";
-        histoRPE+='<div class="histo-point '+cls+'">'+d.rpe+'</div>';
-      });
-
-      // Alertes
-      var alertesHTML="";
-      j.alertes.forEach(function(a){
-        alertesHTML+='<div class="alerte-ligne">'+a+'</div>';
-      });
-
-      var blessureTag = j.blessure.actuelle
-        ? '<span class="joueur-blessure">🤕 Blessé</span>'
-        : (j.blessure.joursAbsence>0 ? '<span class="joueur-absences">'+j.blessure.joursAbsence+'j abs.</span>' : '');
-
-      card.innerHTML =
-        '<div class="joueur-header">'+
-          '<div class="joueur-indicateur '+j.risque+'">'+emojis[j.risque]+'</div>'+
-          '<div class="joueur-nom">'+escapeHTML(nom)+'</div>'+
-          blessureTag+
-        '</div>'+
-        '<div class="joueur-metriques">'+
-          '<div class="metrique"><div class="m-val '+classeMeteo+'">'+moyMeteo+'</div><div class="m-lbl">Météo moy.<br>/5</div></div>'+
-          '<div class="metrique"><div class="m-val '+classeRPE+'">'+moyRPE+'</div><div class="m-lbl">RPE moy.<br>/10</div></div>'+
-          '<div class="metrique"><div class="m-val '+classeHooper+'">'+hooScore+'</div><div class="m-lbl">Hooper<br>dernier</div></div>'+
-          '<div class="metrique"><div class="m-val '+(j.alertes.length>0?"m-rouge":"m-vert")+'">'+j.alertes.length+'</div><div class="m-lbl">Alerte'+(j.alertes.length!==1?"s":"")+'</div></div>'+
-        '</div>'+
-        '<div class="joueur-detail" id="detail-'+nom.replace(/\s/g,"_")+'">' +
-          (alertesHTML ? '<div class="detail-section">'+alertesHTML+'</div>' : '') +
-          (histoMeteo ? '<div class="detail-section"><div class="detail-titre">Météo — 6 dernières séances</div><div class="historique-mini">'+histoMeteo+'</div></div>' : '') +
-          (histoRPE ? '<div class="detail-section"><div class="detail-titre">RPE — 6 dernières séances</div><div class="historique-mini">'+histoRPE+'</div></div>' : '') +
-          (hooMoy ? '<div class="detail-section"><div class="detail-ligne"><span class="d-lbl">Hooper moyen (matchs)</span><span class="d-val">'+hooMoy+'/25</span></div></div>' : '') +
-          (j.blessure.joursAbsence>0 ? '<div class="detail-section"><div class="detail-ligne"><span class="d-lbl">Jours d\'absence saison</span><span class="d-val">'+j.blessure.joursAbsence+' j</span></div></div>' : '') +
-        '</div>';
-
-      // Click pour expand/collapse
-      card.addEventListener("click", function(){
-        var detail=document.getElementById("detail-"+nom.replace(/\s/g,"_"));
-        detail.classList.toggle("show");
-      });
-
-      grille.appendChild(card);
-    });
-
-    if(liste.length===0){
-      grille.innerHTML='<div style="text-align:center;color:var(--texte-att);padding:30px;">Aucun joueur dans cette catégorie.</div>';
-    }
-  }
-
-  function escapeHTML(s){ var d=document.createElement("div");d.textContent=s;return d.innerHTML; }
-
-})();
+  document.getElementById('playerZoneDetail').textContent = "Sélectionne une zone colorée pour voir les dates.";
+}
 </script>
 </body>
 </html>
