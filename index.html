@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <title>Cockpit Saison — U13 Limoges Football</title>
 <style>
   :root{
@@ -136,7 +137,46 @@
 
   .last-update{text-align:right;font-size:11px;color:var(--texte-att);margin-bottom:10px;}
   .footer-note{text-align:center;color:var(--texte-att);font-size:11.5px;margin-top:26px;line-height:1.5;}
+
+  /* EXPORT */
+  .export-zone{background:var(--panneau);border:1px solid var(--ligne);border-radius:16px;padding:18px;margin-top:20px;}
+  .export-zone h3{font-size:14px;font-weight:700;margin:0 0 14px;}
+  .export-grille-joueurs{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:14px;}
+  .export-joueur-btn{
+    background:var(--panneau-clair);border:1.5px solid var(--ligne);color:var(--texte-att);
+    padding:8px 6px;border-radius:10px;cursor:pointer;font-size:12px;font-weight:600;text-align:center;
+  }
+  .export-joueur-btn.sel{border-color:var(--bleu);background:rgba(74,125,214,.15);color:var(--texte);}
+  .export-actions{display:flex;gap:8px;}
+  .export-actions button{flex:1;padding:10px;border-radius:10px;border:1px solid var(--ligne);background:var(--panneau-clair);color:var(--texte-att);font-size:13px;cursor:pointer;}
+  .export-actions button:hover{border-color:var(--bleu);color:var(--texte);}
+  .btn-export-pdf{background:var(--rouge) !important;color:#fff !important;border-color:var(--rouge) !important;font-weight:700;}
+  .btn-export-pdf:hover{opacity:.88;}
+  .btn-export-pdf:disabled{background:#3a3e48 !important;color:#7a7e88 !important;border-color:var(--ligne) !important;cursor:not-allowed;}
+  .export-status{font-size:12px;color:var(--texte-att);text-align:center;margin-top:10px;min-height:16px;}
   .vide{text-align:center;color:var(--texte-att);font-size:14px;padding:30px;border:1px dashed var(--ligne);border-radius:14px;}
+
+  /* EXPORT */
+  .export-panel{
+    background:var(--panneau);border:1px solid var(--ligne);border-radius:16px;
+    padding:16px;margin-bottom:16px;display:none;
+  }
+  .export-panel.show{display:block;}
+  .export-panel h3{font-size:13px;font-weight:700;margin:0 0 12px;color:var(--texte-att);text-transform:uppercase;letter-spacing:.08em;}
+  .export-grille-joueurs{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:14px;}
+  .export-joueur-btn{
+    background:var(--panneau-clair);border:1.5px solid var(--ligne);color:var(--texte-att);
+    padding:8px 6px;border-radius:10px;cursor:pointer;text-align:center;font-size:12px;font-weight:600;
+  }
+  .export-joueur-btn.selected{border-color:var(--bleu);background:rgba(74,125,214,.15);color:var(--texte);}
+  .export-actions{display:flex;gap:8px;margin-top:4px;}
+  .export-select-all{background:none;border:1px solid var(--ligne);color:var(--texte-att);font-size:12px;padding:7px 12px;border-radius:8px;cursor:pointer;}
+  .btn-generer-pdf{
+    flex:1;background:var(--rouge);color:#fff;border:none;padding:12px;
+    border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;
+  }
+  .btn-generer-pdf:disabled{background:#3a3e48;color:#7a7e88;cursor:not-allowed;}
+  .export-status{font-size:12px;color:var(--texte-att);text-align:center;margin-top:8px;min-height:16px;}
 </style>
 </head>
 <body>
@@ -161,7 +201,19 @@
 
     <div class="actions-bar">
       <button id="btnActualiser">🔄 Actualiser</button>
+      <button id="btnExport">📄 Exporter PDF</button>
       <button id="btnDeconnexion">🔒 Verrouiller</button>
+    </div>
+
+    <!-- PANNEAU EXPORT -->
+    <div class="export-panel" id="exportPanel">
+      <h3>Sélectionner les joueurs à exporter</h3>
+      <div class="export-grille-joueurs" id="exportGrille"></div>
+      <div class="export-actions">
+        <button class="export-select-all" id="btnSelectAll">Tout sélectionner</button>
+        <button class="btn-generer-pdf" id="btnGenererPDF" disabled>📥 Générer le PDF</button>
+      </div>
+      <div class="export-status" id="exportStatus"></div>
     </div>
 
     <!-- SÉLECTEUR DE VUE -->
@@ -191,6 +243,18 @@
       <div class="grille-cockpit" id="grilleCockpit"></div>
     </div>
 
+  </div>
+
+  <!-- ZONE EXPORT -->
+  <div class="export-zone" id="exportZone" style="display:none;">
+    <h3>📄 Exporter des fiches joueurs (PDF)</h3>
+    <div class="export-grille-joueurs" id="exportGrilleJoueurs"></div>
+    <div class="export-actions">
+      <button id="btnSelectTous">Tout sélectionner</button>
+      <button id="btnDeselectTous">Tout désélectionner</button>
+      <button class="btn-export-pdf" id="btnExportPDF" disabled>Télécharger PDF</button>
+    </div>
+    <div class="export-status" id="exportStatus"></div>
   </div>
 
   <div class="footer-note">Données agrégées depuis Météo · RPE · Match Day · Blessures</div>
@@ -605,6 +669,9 @@
     });
 
     if(liste.length===0) grille.innerHTML='<div class="vide">Aucun joueur dans cette catégorie.</div>';
+    // Afficher la zone export une fois les données chargées
+    document.getElementById("exportZone").style.display="block";
+    construireGrilleExport();
   }
 
   function renderBlessures(recentes, vue){
@@ -632,6 +699,236 @@
     });
     html+='</div>';
     return html;
+  }
+
+  // ---- EXPORT PDF ----
+  var exportSelectionnes = {};
+
+  function construireGrilleExport(){
+    var grille = document.getElementById("exportGrilleJoueurs");
+    grille.innerHTML = "";
+    EFFECTIF.forEach(function(nom){
+      var btn = document.createElement("button");
+      btn.className = "export-joueur-btn" + (exportSelectionnes[nom] ? " sel" : "");
+      btn.textContent = nom;
+      btn.addEventListener("click", function(){
+        exportSelectionnes[nom] = !exportSelectionnes[nom];
+        btn.classList.toggle("sel", exportSelectionnes[nom]);
+        mettreAJourBtnExport();
+      });
+      grille.appendChild(btn);
+    });
+    mettreAJourBtnExport();
+  }
+
+  function mettreAJourBtnExport(){
+    var nb = Object.values(exportSelectionnes).filter(Boolean).length;
+    var btn = document.getElementById("btnExportPDF");
+    btn.disabled = nb === 0;
+    btn.textContent = nb > 0 ? "Télécharger PDF ("+nb+" joueur"+(nb>1?"s":"")+")" : "Télécharger PDF";
+  }
+
+  document.getElementById("btnSelectTous").addEventListener("click", function(){
+    EFFECTIF.forEach(function(nom){ exportSelectionnes[nom] = true; });
+    construireGrilleExport();
+  });
+
+  document.getElementById("btnDeselectTous").addEventListener("click", function(){
+    EFFECTIF.forEach(function(nom){ exportSelectionnes[nom] = false; });
+    construireGrilleExport();
+  });
+
+  document.getElementById("btnExportPDF").addEventListener("click", function(){
+    var joueursSel = EFFECTIF.filter(function(nom){ return exportSelectionnes[nom]; });
+    if(joueursSel.length === 0) return;
+    if(!donneesBrutes){ alert("Actualisez les données avant d'exporter."); return; }
+    genererPDF(joueursSel);
+  });
+
+  function genererPDF(joueurs){
+    var statusEl = document.getElementById("exportStatus");
+    var btn = document.getElementById("btnExportPDF");
+    btn.disabled = true;
+    statusEl.textContent = "Génération en cours…";
+
+    try{
+      var jsPDF = window.jspdf.jsPDF;
+      var doc = new jsPDF({ orientation:"portrait", unit:"mm", format:"a4" });
+      var pageW = 210, pageH = 297;
+      var mL = 15, mR = 15, mT = 20;
+      var contentW = pageW - mL - mR;
+
+      var vuesPeriodes = ["7j","30j","3m","saison"];
+      var vuesLabels = {"7j":"7 derniers jours","30j":"30 derniers jours","3m":"3 derniers mois","saison":"Saison complète (août → juin)"};
+
+      var dateExport = new Date().toLocaleDateString("fr-FR",{day:"2-digit",month:"2-digit",year:"numeric"});
+
+      joueurs.forEach(function(nom, idx){
+        if(idx > 0) doc.addPage();
+
+        var y = mT;
+
+        // ---- EN-TÊTE ----
+        doc.setFillColor(15,17,21);
+        doc.rect(0,0,pageW,22,"F");
+        doc.setTextColor(238,240,243);
+        doc.setFontSize(14); doc.setFont("helvetica","bold");
+        doc.text("U13 Limoges Football — Fiche joueur", mL, 10);
+        doc.setFontSize(9); doc.setFont("helvetica","normal");
+        doc.text("Exporté le "+dateExport, mL, 16);
+        doc.text("Page "+(idx+1)+"/"+joueurs.length, pageW-mR, 16, {align:"right"});
+
+        y = 30;
+
+        // ---- NOM JOUEUR ----
+        doc.setFillColor(26,29,36);
+        doc.roundedRect(mL, y, contentW, 14, 3, 3, "F");
+        doc.setTextColor(238,240,243);
+        doc.setFontSize(16); doc.setFont("helvetica","bold");
+        doc.text(nom, mL+6, y+9);
+        y += 20;
+
+        // ---- 4 VUES ----
+        vuesPeriodes.forEach(function(vue){
+          var j = analyserJoueur(nom, donneesBrutes, vue);
+          var avecRisque = vue==="7j"||vue==="30j";
+
+          // Titre vue
+          doc.setFillColor(34,38,47);
+          doc.rect(mL, y, contentW, 8, "F");
+          doc.setTextColor(154,160,173);
+          doc.setFontSize(8); doc.setFont("helvetica","bold");
+          doc.text(vuesLabels[vue].toUpperCase(), mL+4, y+5.5);
+
+          // Indicateur risque
+          if(avecRisque){
+            var risqueLabel = {vert:"EN FORME",or:"À SURVEILLER",rouge:"À RISQUE",bilan:"BILAN"};
+            var risqueColor = {vert:[58,157,90],or:[212,168,46],rouge:[196,57,47],bilan:[74,125,214]};
+            var rc = risqueColor[j.risque]||[154,160,173];
+            doc.setFillColor(rc[0],rc[1],rc[2]);
+            var rl = risqueLabel[j.risque]||"";
+            doc.setTextColor(255,255,255);
+            doc.setFontSize(7);
+            var rw = doc.getTextWidth(rl)+6;
+            doc.roundedRect(mL+contentW-rw-1, y+1, rw, 6, 1.5, 1.5, "F");
+            doc.text(rl, mL+contentW-rw/2-1, y+5.2, {align:"center"});
+          }
+
+          y += 11;
+
+          // Métriques selon vue
+          var metriques = [];
+          if(vue==="7j"||vue==="30j"){
+            metriques = [
+              {lbl:"Météo moy.", val:j.meteo.moyenne||"—", unit:"/5", ok:j.meteo.moyenne?(parseFloat(j.meteo.moyenne)<=2?1:parseFloat(j.meteo.moyenne)<=3?2:3):0},
+              {lbl:"RPE moy.", val:j.rpe.moyenne||"—", unit:"/10", ok:j.rpe.moyenne?(parseFloat(j.rpe.moyenne)<=5?1:parseFloat(j.rpe.moyenne)<=7?2:3):0},
+              {lbl:"Hooper dernier", val:j.hooper.dernier?j.hooper.dernier.total:"—", unit:"/25", ok:j.hooper.moyenne?(parseFloat(j.hooper.moyenne)<=10?1:parseFloat(j.hooper.moyenne)<=16?2:3):0},
+              {lbl:"Séances météo", val:j.meteo.donnees.length, unit:"", ok:1},
+              {lbl:"Séances RPE", val:j.rpe.donnees.length, unit:"", ok:1}
+            ];
+          } else if(vue==="3m"){
+            metriques = [
+              {lbl:"Hooper moyen", val:j.hooper.moyenne||"—", unit:"/25", ok:j.hooper.moyenne?(parseFloat(j.hooper.moyenne)<=10?1:parseFloat(j.hooper.moyenne)<=16?2:3):0},
+              {lbl:"Blessures", val:j.blessure.recentes.length, unit:"", ok:j.blessure.recentes.length===0?1:j.blessure.recentes.length<=2?2:3},
+              {lbl:"Jours d'absence", val:j.blessure.joursAbsence+"j", unit:"", ok:j.blessure.joursAbsence===0?1:j.blessure.joursAbsence<=7?2:3},
+              {lbl:"Matchs Hooper", val:j.hooper.donnees.length, unit:"", ok:1}
+            ];
+          } else {
+            metriques = [
+              {lbl:"Blessures saison", val:j.blessure.recentes.length, unit:"", ok:j.blessure.recentes.length===0?1:j.blessure.recentes.length<=3?2:3},
+              {lbl:"Jours d'absence", val:j.blessure.joursAbsence+"j", unit:"", ok:j.blessure.joursAbsence===0?1:j.blessure.joursAbsence<=14?2:3},
+              {lbl:"Hooper moy. saison", val:j.hooper.moyenne||"—", unit:"/25", ok:j.hooper.moyenne?(parseFloat(j.hooper.moyenne)<=10?1:parseFloat(j.hooper.moyenne)<=16?2:3):0},
+              {lbl:"Matchs analysés", val:j.hooper.donnees.length, unit:"", ok:1}
+            ];
+          }
+
+          var colW = contentW / metriques.length;
+          metriques.forEach(function(m,mi){
+            var x = mL + mi*colW;
+            doc.setFillColor(22,26,33);
+            doc.roundedRect(x+1, y, colW-2, 16, 2, 2, "F");
+            var colors = {0:[154,160,173], 1:[58,157,90], 2:[212,168,46], 3:[196,57,47]};
+            var c = colors[m.ok]||colors[0];
+            doc.setTextColor(c[0],c[1],c[2]);
+            doc.setFontSize(11); doc.setFont("helvetica","bold");
+            doc.text(String(m.val)+m.unit, x+colW/2, y+8, {align:"center"});
+            doc.setTextColor(154,160,173);
+            doc.setFontSize(6.5); doc.setFont("helvetica","normal");
+            doc.text(m.lbl, x+colW/2, y+13.5, {align:"center"});
+          });
+          y += 19;
+
+          // Alertes
+          if(j.alertes.length > 0 && avecRisque){
+            j.alertes.forEach(function(a){
+              doc.setFillColor(196,57,47,30);
+              doc.setDrawColor(196,57,47);
+              doc.roundedRect(mL, y, contentW, 7, 1.5, 1.5, "FD");
+              doc.setTextColor(196,57,47);
+              doc.setFontSize(7.5); doc.setFont("helvetica","normal");
+              var aStr = a.replace(/[🟢🟡🔴⚡😴📋🤕]/g,"").trim();
+              doc.text("⚠ "+aStr, mL+4, y+4.8);
+              y += 9;
+            });
+          }
+
+          // Blessures récentes (toutes vues)
+          if(j.blessure.recentes.length > 0){
+            var blMax = vue==="saison" ? j.blessure.recentes.length : Math.min(j.blessure.recentes.length, 3);
+            var blTri = j.blessure.recentes.slice(0,blMax);
+            doc.setTextColor(154,160,173);
+            doc.setFontSize(7); doc.setFont("helvetica","bold");
+            doc.text("BLESSURES ("+j.blessure.recentes.length+")", mL, y+4);
+            y += 7;
+            blTri.forEach(function(b){
+              var zone = b.zoneLabel||ZONES_LABELS[b.zone]||b.zone||"—";
+              var type = b.type||"—";
+              var duree = parseInt(b.dureeJours,10)||0;
+              var dureeAff = duree===-1?"saison":(duree===0?"joue":duree+"j");
+              var dateStr = normalDate(b.date);
+              var d = new Date(dateStr+"T12:00:00");
+              var dateAff = d.getDate()+"/"+(d.getMonth()+1);
+              var actif = duree===-1||(duree>0 && new Date(d.getTime()+duree*86400000)>=new Date());
+              doc.setFillColor(actif?80:34, actif?20:38, actif?20:47);
+              doc.roundedRect(mL, y, contentW, 7, 1.5, 1.5, "F");
+              doc.setTextColor(actif?196:154, actif?57:160, actif?47:173);
+              doc.setFontSize(7.5); doc.setFont("helvetica","bold");
+              doc.text((actif?"● ":"")+zone+(b.zoneCroissance?" ⚠":""), mL+4, y+4.8);
+              doc.setFont("helvetica","normal");
+              doc.text(dateAff+" · "+type+" · "+dureeAff+(b.intensite?" · int."+b.intensite+"/5":""), mL+contentW-4, y+4.8, {align:"right"});
+              y += 9;
+            });
+          }
+
+          y += 4; // espace entre les vues
+
+          // Vérification si on dépasse la page
+          if(y > pageH-20 && vue !== "saison"){
+            doc.addPage();
+            y = mT;
+          }
+        });
+
+        // ---- PIED DE PAGE ----
+        doc.setFillColor(15,17,21);
+        doc.rect(0,pageH-10,pageW,10,"F");
+        doc.setTextColor(154,160,173);
+        doc.setFontSize(7); doc.setFont("helvetica","normal");
+        doc.text("U13 Limoges Football · Cockpit Saison · "+dateExport, pageW/2, pageH-4, {align:"center"});
+      });
+
+      var filename = joueurs.length===1
+        ? "fiche-"+joueurs[0].replace(/\s/g,"_")+"-"+dateExport.replace(/\//g,"-")+".pdf"
+        : "fiches-joueurs-"+dateExport.replace(/\//g,"-")+".pdf";
+
+      doc.save(filename);
+      statusEl.textContent = "✅ PDF téléchargé — "+joueurs.length+" fiche"+(joueurs.length>1?"s":"");
+    } catch(err){
+      statusEl.textContent = "❌ Erreur : "+err.message;
+      console.error(err);
+    }
+    btn.disabled = false;
+    mettreAJourBtnExport();
   }
 
   function escapeHTML(s){ var d=document.createElement("div");d.textContent=s;return d.innerHTML; }
