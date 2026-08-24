@@ -117,6 +117,7 @@
   /* BLESSURES */
   .blessure-item{display:flex;align-items:flex-start;gap:10px;background:var(--panneau-clair);border:1px solid var(--ligne);border-radius:10px;padding:10px 12px;margin-bottom:6px;}
   .blessure-item.active-inj{border-color:var(--rouge);background:rgba(196,57,47,.08);}
+  .blessure-item.repris-inj{border-color:var(--vert);background:rgba(58,157,90,.08);}
   .blessure-zone{font-size:13px;font-weight:700;}
   .blessure-meta{font-size:11px;color:var(--texte-att);margin-top:2px;line-height:1.4;}
   .blessure-badge{font-size:10px;font-weight:700;padding:3px 8px;border-radius:6px;flex-shrink:0;white-space:nowrap;}
@@ -248,9 +249,9 @@
 
   var ZONES_LABELS = {
     tete:"Tête",epaule:"Épaule",coude:"Coude",poignet_main:"Poignet / Main",
-    dos_rachis:"Dos / Rachis",hanche_bassin:"Hanche / Bassin",ischio:"Ischio-jambiers",
-    cuisse:"Cuisse / Quadriceps",genou_tta:"Genou — avant (TTA)",genou_autre:"Genou — autre",
-    tibia_mollet:"Tibia / Mollet",cheville:"Cheville",talon:"Talon",pied:"Pied",autre:"Autre"
+    dos_rachis:"Dos / Rachis",hanche_bassin:"Hanche / Bassin",adducteurs:"Adducteurs / aine",
+    ischio:"Ischio-jambiers",cuisse:"Quadriceps",genou_tta:"Genou — avant (TTA)",genou_autre:"Genou — autre",
+    tibia:"Tibia",mollet:"Mollet",cheville:"Cheville",talon:"Talon",pied:"Pied",autre:"Autre"
   };
 
   var moisFr = ["janvier","février","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","décembre"];
@@ -381,7 +382,7 @@
       meteo:  {donnees:[], moyenne:null},
       rpe:    {donnees:[], moyenne:null, alerteIntense:false},
       hooper: {donnees:[], moyenne:null, dernier:null},
-      blessure:{actuelle:null, recentes:[], joursAbsence:0, parZone:{}},
+      blessure:{actuelle:null, recentes:[], joursAbsence:0, parZone:{}, dernierRetour:null},
       risque:"bilan", alertes:[]
     };
 
@@ -434,13 +435,40 @@
       if(!dateStr) return;
       var dateBl = new Date(dateStr+"T12:00:00");
       var duree = parseInt(d.dureeJours,10)||0;
-      var dateRetour = new Date(dateBl);
-      if(duree>0) dateRetour.setDate(dateBl.getDate()+duree);
-      var actif = duree===-1 || (duree>0 && dateRetour>=aujourd_hui);
+      var statut = d.statut||"";
+
+      // Statut réel (issu de "Retours à valider") en priorité ; on ne retombe
+      // sur l'estimation de durée que pour les lignes créées avant ce suivi.
+      var actif;
+      if(statut){
+        actif = statut==="En cours";
+      } else {
+        var dateRetourEst = new Date(dateBl);
+        if(duree>0) dateRetourEst.setDate(dateBl.getDate()+duree);
+        actif = duree===-1 || (duree>0 && dateRetourEst>=aujourd_hui);
+      }
+
+      // Jours d'absence réels : date de fin réelle si le joueur est revenu,
+      // jours écoulés depuis la blessure si toujours en cours, sinon l'estimation
+      // de départ pour les anciennes lignes sans statut.
+      var joursAbs = 0;
+      if(statut==="Repris" && d.dateFinReelle){
+        var dateFin = new Date(normalDate(d.dateFinReelle)+"T12:00:00");
+        joursAbs = Math.max(0, Math.round((dateFin-dateBl)/86400000));
+      } else if(actif){
+        joursAbs = Math.max(0, Math.round((aujourd_hui-dateBl)/86400000));
+      } else if(duree>0){
+        joursAbs = duree;
+      } else if(duree===-1){
+        joursAbs = 30;
+      }
 
       if(actif && !j.blessure.actuelle) j.blessure.actuelle=d;
-      if(duree>0) j.blessure.joursAbsence+=duree;
-      else if(duree===-1) j.blessure.joursAbsence+=30;
+      j.blessure.joursAbsence += joursAbs;
+
+      if(statut==="Repris" && d.dateFinReelle && (!j.blessure.dernierRetour || normalDate(d.dateFinReelle)>normalDate(j.blessure.dernierRetour.dateFinReelle))){
+        j.blessure.dernierRetour = d;
+      }
 
       if(dateBl>=bornes.debut){
         j.blessure.recentes.push(d);
@@ -452,28 +480,36 @@
     // CALCUL DU RISQUE
     if(vue==="saison"){ j.risque="bilan"; return j; }
 
-    if(j.blessure.actuelle){ j.risque="rouge"; j.alertes.push("🤕 Blessure en cours"); return j; }
+    if(j.blessure.actuelle){
+      j.risque="rouge";
+      j.alertes.push(j.blessure.actuelle.recidive ? "🤕 Blessure en cours — ⚠ récidive sur cette zone" : "🤕 Blessure en cours");
+      return j;
+    }
 
     var score=0;
     var mM=parseFloat(j.meteo.moyenne), mR=parseFloat(j.rpe.moyenne), mH=parseFloat(j.hooper.moyenne);
+    var aRecidive = j.blessure.recentes.some(function(b){ return b.recidive; });
 
     if(vue==="7j"){
       if(!isNaN(mM)){ if(mM>=3) score+=3; else if(mM>=2.5) score+=1; }
       if(!isNaN(mR)){ if(mR>=7) score+=2; else if(mR>=6) score+=1; }
       if(j.rpe.alerteIntense){ score+=2; j.alertes.push("⚡ RPE ≥ 8 deux fois cette semaine"); }
       if(j.blessure.recentes.length>=1) score+=1;
+      if(aRecidive){ score+=1; j.alertes.push("⚠ Récidive détectée sur une zone déjà touchée"); }
     } else if(vue==="30j"){
       if(!isNaN(mM)){ if(mM>=3.5) score+=3; else if(mM>=3) score+=1; }
       if(!isNaN(mR)){ if(mR>=7.5) score+=2; else if(mR>=6.5) score+=1; }
       if(j.rpe.alerteIntense){ score+=2; j.alertes.push("⚡ RPE ≥ 8 deux fois récemment"); }
       if(j.blessure.recentes.length>=2) score+=2;
       else if(j.blessure.recentes.length===1) score+=1;
+      if(aRecidive){ score+=2; j.alertes.push("⚠ Récidive détectée sur une zone déjà touchée"); }
     } else if(vue==="3m"){
       // Météo et RPE affichés mais pas dans le calcul
       if(!isNaN(mH)){ if(mH>=18) score+=3; else if(mH>=14) score+=1; }
       if(j.blessure.recentes.length>=3){ score+=2; j.alertes.push("🤕 "+j.blessure.recentes.length+" blessures sur 3 mois"); }
       else if(j.blessure.recentes.length>=2) score+=1;
       if(j.blessure.joursAbsence>=14) score+=1;
+      if(aRecidive){ score+=1; j.alertes.push("⚠ Récidive détectée sur une zone déjà touchée"); }
     }
 
     if(!isNaN(mM) && mM>=3.5) j.alertes.push("😴 Fatigue élevée (météo moy. "+mM+"/5)");
@@ -570,7 +606,9 @@
 
       var blessureTag=j.blessure.actuelle
         ?'<span class="joueur-blessure">🤕 Blessé</span>'
-        :(j.blessure.joursAbsence>0?'<span style="font-size:11px;color:var(--texte-att)">'+j.blessure.joursAbsence+'j abs.</span>':'');
+        :(j.blessure.dernierRetour
+          ?'<span style="font-size:11px;font-weight:700;color:var(--vert);background:rgba(58,157,90,.15);border:1px solid rgba(58,157,90,.3);padding:3px 8px;border-radius:999px;">✓ Repris '+(function(){ var df=new Date(normalDate(j.blessure.dernierRetour.dateFinReelle)+"T12:00:00"); return df.getDate()+" "+moisFrC[df.getMonth()]; })()+'</span>'
+          :(j.blessure.joursAbsence>0?'<span style="font-size:11px;color:var(--texte-att)">'+j.blessure.joursAbsence+'j abs.</span>':''));
 
       var headerHTML=
         '<div class="joueur-header">'+
@@ -629,7 +667,8 @@
         zonesTriees.forEach(function(z){
           var n=j.blessure.parZone[z];
           var lbl=ZONES_LABELS[z]||z;
-          zonesHTML+='<div class="bilan-zone-bar"><span class="bz-lbl">'+escapeHTML(lbl)+'</span><div class="bz-track"><div class="bz-fill" style="width:'+Math.round(n/max*100)+'%"></div></div><span class="bz-count">'+n+'</span></div>';
+          var alerte = n>=2 ? ' <span style="color:var(--rouge);">⚠</span>' : '';
+          zonesHTML+='<div class="bilan-zone-bar"><span class="bz-lbl">'+escapeHTML(lbl)+alerte+'</span><div class="bz-track"><div class="bz-fill" style="width:'+Math.round(n/max*100)+'%"></div></div><span class="bz-count">'+n+'</span></div>';
         });
         zonesHTML+='</div>';
       }
@@ -669,14 +708,29 @@
       var zone=b.zoneLabel||ZONES_LABELS[b.zone]||b.zone||"—";
       var type=b.type||"autre";
       var duree=parseInt(b.dureeJours,10)||0;
-      var dureeAff=duree===-1?"saison entière":(duree===0?"joue quand même":duree+" j");
-      var dateRetour=new Date(d); if(duree>0) dateRetour.setDate(d.getDate()+duree);
-      var actif=duree===-1||(duree>0&&dateRetour>=aujourd_hui);
+      var statut=b.statut||"";
+
+      var actif;
+      if(statut){ actif = statut==="En cours"; }
+      else{ var dr=new Date(d); if(duree>0) dr.setDate(d.getDate()+duree); actif = duree===-1||(duree>0&&dr>=aujourd_hui); }
+
+      var statutAff;
+      if(statut==="Repris" && b.dateFinReelle){
+        var df=new Date(normalDate(b.dateFinReelle)+"T12:00:00");
+        statutAff = "revenu le "+df.getDate()+" "+moisFrC[df.getMonth()];
+      } else if(statut==="A joué quand même"){
+        statutAff = "a joué quand même";
+      } else if(actif){
+        statutAff = "en cours"+(duree>0?" ("+duree+"j est.)":"");
+      } else {
+        statutAff = duree===-1?"saison entière":(duree===0?"joue quand même":duree+" j est.");
+      }
+
       var intensite=parseInt(b.intensite,10)||0;
       var dots=""; for(var i=1;i<=5;i++) dots+='<div class="i-dot'+(i<=intensite?" i"+intensite:"")+'"></div>';
-      html+='<div class="blessure-item'+(actif?" active-inj":'')+'">';
-      html+='<div style="flex:1"><div class="blessure-zone">'+(actif?"🔴 ":"")+escapeHTML(zone)+(b.zoneCroissance?" ⚠":"")+'</div>';
-      html+='<div class="blessure-meta">'+dateAff+" · "+dureeAff+(b.cause?" · "+escapeHTML(b.cause):"")+'</div>';
+      html+='<div class="blessure-item'+(actif?" active-inj":(statut==="Repris"?" repris-inj":''))+'">';
+      html+='<div style="flex:1"><div class="blessure-zone">'+(actif?"🔴 ":(statut==="Repris"?"✅ ":""))+escapeHTML(zone)+(b.zoneCroissance?" ⚠":"")+(b.recidive?" · récidive":"")+'</div>';
+      html+='<div class="blessure-meta">'+dateAff+" · "+statutAff+(b.cause?" · "+escapeHTML(b.cause):"")+'</div>';
       html+='<div class="intensite-dots">'+dots+'</div></div>';
       html+='<span class="blessure-badge '+escapeHTML(type)+'">'+escapeHTML(type)+'</span></div>';
     });
@@ -867,16 +921,25 @@
               var zone = b.zoneLabel||ZONES_LABELS[b.zone]||b.zone||"—";
               var type = b.type||"—";
               var duree = parseInt(b.dureeJours,10)||0;
-              var dureeAff = duree===-1?"saison":(duree===0?"joue":duree+"j");
+              var statut = b.statut||"";
               var dateStr = normalDate(b.date);
               var d = new Date(dateStr+"T12:00:00");
               var dateAff = d.getDate()+"/"+(d.getMonth()+1);
-              var actif = duree===-1||(duree>0 && new Date(d.getTime()+duree*86400000)>=new Date());
-              doc.setFillColor(actif?80:34, actif?20:38, actif?20:47);
+              var actif = statut ? statut==="En cours" : (duree===-1||(duree>0 && new Date(d.getTime()+duree*86400000)>=new Date()));
+              var repris = statut==="Repris";
+              var dureeAff;
+              if(repris && b.dateFinReelle){
+                var df=new Date(normalDate(b.dateFinReelle)+"T12:00:00");
+                dureeAff = "revenu "+df.getDate()+"/"+(df.getMonth()+1);
+              } else {
+                dureeAff = duree===-1?"saison":(duree===0?"joue":duree+"j est.");
+              }
+              if(actif){ doc.setFillColor(80,20,20); doc.setTextColor(196,57,47); }
+              else if(repris){ doc.setFillColor(20,45,32); doc.setTextColor(58,157,90); }
+              else { doc.setFillColor(34,38,47); doc.setTextColor(154,160,173); }
               doc.roundedRect(mL, y, contentW, 7, 1.5, 1.5, "F");
-              doc.setTextColor(actif?196:154, actif?57:160, actif?47:173);
               doc.setFontSize(7.5); doc.setFont("helvetica","bold");
-              doc.text((actif?"● ":"")+zone+(b.zoneCroissance?" ⚠":""), mL+4, y+4.8);
+              doc.text((actif?"● ":(repris?"✓ ":""))+zone+(b.zoneCroissance?" ⚠":"")+(b.recidive?" (récidive)":""), mL+4, y+4.8);
               doc.setFont("helvetica","normal");
               doc.text(dateAff+" · "+type+" · "+dureeAff+(b.intensite?" · int."+b.intensite+"/5":""), mL+contentW-4, y+4.8, {align:"right"});
               y += 9;
