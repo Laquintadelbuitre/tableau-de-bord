@@ -156,27 +156,7 @@
   .export-status{font-size:12px;color:var(--texte-att);text-align:center;margin-top:10px;min-height:16px;}
   .vide{text-align:center;color:var(--texte-att);font-size:14px;padding:30px;border:1px dashed var(--ligne);border-radius:14px;}
 
-  /* EXPORT */
-  .export-panel{
-    background:var(--panneau);border:1px solid var(--ligne);border-radius:16px;
-    padding:16px;margin-bottom:16px;display:none;
-  }
-  .export-panel.show{display:block;}
-  .export-panel h3{font-size:13px;font-weight:700;margin:0 0 12px;color:var(--texte-att);text-transform:uppercase;letter-spacing:.08em;}
-  .export-grille-joueurs{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:14px;}
-  .export-joueur-btn{
-    background:var(--panneau-clair);border:1.5px solid var(--ligne);color:var(--texte-att);
-    padding:8px 6px;border-radius:10px;cursor:pointer;text-align:center;font-size:12px;font-weight:600;
-  }
-  .export-joueur-btn.selected{border-color:var(--bleu);background:rgba(74,125,214,.15);color:var(--texte);}
-  .export-actions{display:flex;gap:8px;margin-top:4px;}
-  .export-select-all{background:none;border:1px solid var(--ligne);color:var(--texte-att);font-size:12px;padding:7px 12px;border-radius:8px;cursor:pointer;}
-  .btn-generer-pdf{
-    flex:1;background:var(--rouge);color:#fff;border:none;padding:12px;
-    border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;
-  }
-  .btn-generer-pdf:disabled{background:#3a3e48;color:#7a7e88;cursor:not-allowed;}
-  .export-status{font-size:12px;color:var(--texte-att);text-align:center;margin-top:8px;min-height:16px;}
+
 </style>
 </head>
 <body>
@@ -191,7 +171,7 @@
   <div id="ecranAuth">
     <div class="auth-box">
       <h2>Accès coach</h2>
-      <input type="tel" inputmode="numeric" maxlength="4" id="inputPIN" placeholder="••••">
+      <input type="password" inputmode="numeric" pattern="[0-9]*" autocomplete="off" maxlength="4" id="inputPIN" placeholder="••••">
       <button id="btnAuth">Accéder</button>
       <div class="auth-erreur" id="authErreur">Code incorrect.</div>
     </div>
@@ -201,19 +181,7 @@
 
     <div class="actions-bar">
       <button id="btnActualiser">🔄 Actualiser</button>
-      <button id="btnExport">📄 Exporter PDF</button>
       <button id="btnDeconnexion">🔒 Verrouiller</button>
-    </div>
-
-    <!-- PANNEAU EXPORT -->
-    <div class="export-panel" id="exportPanel">
-      <h3>Sélectionner les joueurs à exporter</h3>
-      <div class="export-grille-joueurs" id="exportGrille"></div>
-      <div class="export-actions">
-        <button class="export-select-all" id="btnSelectAll">Tout sélectionner</button>
-        <button class="btn-generer-pdf" id="btnGenererPDF" disabled>📥 Générer le PDF</button>
-      </div>
-      <div class="export-status" id="exportStatus"></div>
     </div>
 
     <!-- SÉLECTEUR DE VUE -->
@@ -262,8 +230,15 @@
 
 <script>
 (function(){
-  var CODE_PIN = "0501";
+  var HASH_PIN = "575a30bd2975cd02639884b04cc27006ac46473358f0d2f1380cd88abda303ba"; // empreinte SHA-256 du code, jamais le code lui-même
   var SESSION_KEY = "cockpit_auth_v2";
+
+  function hashTexte(txt){
+    var donnees = new TextEncoder().encode(txt);
+    return crypto.subtle.digest("SHA-256", donnees).then(function(buf){
+      return Array.from(new Uint8Array(buf)).map(function(b){ return b.toString(16).padStart(2,"0"); }).join("");
+    });
+  }
   var URL_METEO    = "https://script.google.com/macros/s/AKfycby9nP9dZjcJHINPigF8_cBBbBEcRXk-buyNKW6vvs4zpnz2e9UYXzB8OzzCuLg5C9A73g/exec";
   var URL_RPE      = "https://script.google.com/macros/s/AKfycbxpcsBjwqNDR7LkbT53krZK2d29iQlDzpOUovqD2FCnEGHjENNWE6orj6upb7PtHrLo/exec";
   var URL_MATCHDAY = "https://script.google.com/macros/s/AKfycbzYTdTfQWN9CCujM7p4JwNplNgmOIz9HyA1hv609FQWiQeRXlYE3h-Xj40ekKI5Wpwpaw/exec";
@@ -307,9 +282,17 @@
   var inputPIN = document.getElementById("inputPIN");
   inputPIN.addEventListener("input", function(){ this.value=this.value.replace(/[^0-9]/g,"").slice(0,4); });
   document.getElementById("btnAuth").addEventListener("click", function(){
-    if(inputPIN.value.trim()!==CODE_PIN){ document.getElementById("authErreur").style.display="block"; return; }
-    sessionStorage.setItem(SESSION_KEY,"1");
-    ouvrirCockpit();
+    hashTexte(inputPIN.value.trim()).then(function(h){
+      if(h!==HASH_PIN){
+        document.getElementById("authErreur").style.display="block";
+        inputPIN.value="";
+        return;
+      }
+      document.getElementById("authErreur").style.display="none";
+      sessionStorage.setItem(SESSION_KEY,"1");
+      inputPIN.value="";
+      ouvrirCockpit();
+    });
   });
   if(sessionStorage.getItem(SESSION_KEY)==="1") ouvrirCockpit();
 
