@@ -10,8 +10,6 @@
     --fond:#0f1115;--panneau:#1a1d24;--panneau-clair:#22262f;
     --texte:#eef0f3;--texte-att:#9aa0ad;--ligne:#2c303a;
     --bleu:#4a7dd6;--vert:#3a9d5a;--or:#d4a82e;--rouge:#c4392f;
-    --mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
-    --radius:14px;
   }
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
   html,body{margin:0;padding:0;}
@@ -160,203 +158,14 @@
   .vide{text-align:center;color:var(--texte-att);font-size:14px;padding:30px;border:1px dashed var(--ligne);border-radius:14px;}
 
 
-
-  .card{
-    background:var(--panneau);
-    border:1px solid var(--ligne);
-    border-radius:var(--radius);
-    padding:18px;
-    margin-bottom:16px;
-  }
-  .card h2{
-    margin:0 0 12px;
-    font-size:13px;
-    font-weight:700;
-    text-transform:uppercase;
-    letter-spacing:.08em;
-    color:var(--texte-att);
-    display:flex; align-items:center; gap:8px;
-  }
-  .card h2 .n{
-    font-family:var(--mono);
-    background:var(--panneau-clair);
-    color:var(--texte);
-    border-radius:6px;
-    padding:1px 7px;
-    font-size:11px;
-  }
-
-  label.field-label{
-    display:block; font-size:13px; font-weight:600; margin:0 0 6px;
-  }
-  select, input[type=text], input[type=number], input[type=date], textarea{
-    width:100%;
-    font-family:inherit;
-    font-size:15px;
-    padding:11px 12px;
-    border-radius:10px;
-    border:1.5px solid var(--ligne);
-    background:var(--panneau-clair);
-    color:var(--texte);
-  }
-  textarea{resize:vertical; min-height:60px;}
-  select:focus, input:focus, textarea:focus, button:focus-visible{
-    outline:2px solid var(--vert); outline-offset:1px;
-  }
-
-  .row{display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:14px;}
-  .row.single{grid-template-columns:1fr;}
-  .row:last-child{margin-bottom:0;}
-
-  /* Tabs for zone entry mode */
-  .page{display:none;}
-  .page.active{display:block;}
-  .page-tabs{display:flex; gap:8px; margin-bottom:16px;}
-  .page-tab-btn{
-    flex:1; border:1.5px solid var(--ligne); background:var(--panneau); color:var(--texte-att);
-    font-family:inherit; font-size:13.5px; font-weight:800; letter-spacing:.01em;
-    padding:11px 8px; border-radius:12px; cursor:pointer;
-  }
-  .page-tab-btn.active{background:var(--bleu); border-color:var(--bleu); color:#fff;}
-  .dot{display:inline-block; width:10px; height:10px; border-radius:50%; margin:0 2px -1px;}
-  .dot-0{background:var(--panneau-clair); border:1px solid var(--ligne);}
-  .dot-1{background:var(--or);}
-  .dot-2{background:var(--rouge);}
-
-  .tabbar{display:flex; gap:6px; margin-bottom:14px;}
-  .tabbar button{
-    flex:1;
-    border:1.5px solid var(--ligne);
-    background:var(--panneau-clair);
-    color:var(--texte-att);
-    font-family:inherit; font-size:13px; font-weight:700;
-    padding:9px 6px; border-radius:10px; cursor:pointer;
-  }
-  .tabbar button.active{
-    background:var(--texte); color:var(--panneau-clair); border-color:var(--texte);
-  }
-  .tabpane{display:none;}
-  .tabpane.active{display:block;}
-
-  /* Body map */
-  .bodymap-wrap{display:flex; flex-direction:column; align-items:center; gap:8px;}
-  .bodymap-toggle{display:flex; gap:8px; margin-bottom:6px;}
-  .bodymap-toggle button{
-    border:1px solid var(--ligne); background:var(--panneau-clair); color:var(--texte-att);
-    font-family:var(--mono); font-size:11px; letter-spacing:.06em; text-transform:uppercase;
-    padding:5px 12px; border-radius:20px; cursor:pointer;
-  }
-  .bodymap-toggle button.active{background:var(--vert); color:#fff; border-color:var(--vert);}
-  svg.bodymap{width:100%; max-width:230px; height:auto;}
-  .zone-shape{
-    fill:rgba(58,157,90,.15); stroke:var(--vert); stroke-width:1.5;
-    cursor:pointer; transition:fill .12s, stroke-width .12s;
-  }
-  .zone-shape:hover{fill:rgba(212,168,46,.15); stroke:var(--or);}
-  .zone-shape.growth{stroke-dasharray:3 2;}
-  .zone-shape.selected{fill:var(--rouge); stroke:var(--rouge); }
-  .zone-legend{font-size:11px; color:var(--texte-att); text-align:center; line-height:1.5; margin-top:2px;}
-  .zone-legend .dash{border-bottom:2px dashed var(--texte-att); display:inline-block; width:14px; margin:0 3px -2px;}
-  .selected-zone-label{
-    font-family:var(--mono); font-size:13px; font-weight:600;
-    background:var(--panneau-clair); border-radius:8px; padding:8px 12px; text-align:center; width:100%;
-    margin-top:4px;
-  }
-
-  /* pill choices */
-  .pills{display:flex; flex-wrap:wrap; gap:8px;}
-  .pill{
-    border:1.5px solid var(--ligne); background:var(--panneau-clair); color:var(--texte-att);
-    font-size:13px; font-weight:600; padding:8px 14px; border-radius:20px; cursor:pointer;
-  }
-  .pill.active{background:var(--texte); color:var(--panneau-clair); border-color:var(--texte);}
-  .pill.active.type-croissance{background:var(--or); border-color:var(--or); color:var(--texte);}
-  .pill.active.type-traumatique{background:var(--rouge); border-color:var(--rouge); color:#fff;}
-  .pill.active.type-surcharge{background:var(--vert); border-color:var(--vert); color:#fff;}
-
-  /* intensity scale */
-  .intensity-row{display:flex; gap:6px;}
-  .intensity-btn{
-    flex:1; padding:12px 0; text-align:center; border-radius:10px; border:1.5px solid var(--ligne);
-    background:var(--panneau-clair); font-family:var(--mono); font-weight:700; font-size:15px; cursor:pointer;
-    color:var(--texte-att);
-  }
-  .intensity-btn[data-v="1"].active{background:rgba(58,157,90,.15); border-color:var(--vert); color:var(--texte);}
-  .intensity-btn[data-v="2"].active{background:#eef0c8; border-color:#b7bb4a; color:var(--texte);}
-  .intensity-btn[data-v="3"].active{background:rgba(212,168,46,.15); border-color:var(--or); color:var(--texte);}
-  .intensity-btn[data-v="4"].active{background:#f6cdb8; border-color:#e07f4f; color:var(--texte);}
-  .intensity-btn[data-v="5"].active{background:rgba(196,57,47,.15); border-color:var(--rouge); color:var(--rouge);}
-  .intensity-caption{display:flex; justify-content:space-between; font-size:10px; color:var(--texte-att); margin-top:4px; font-family:var(--mono);}
-
-  .duration-chips{display:flex; flex-wrap:wrap; gap:8px; margin-bottom:10px;}
-  .chip{
-    border:1.5px solid var(--ligne); background:var(--panneau-clair); font-size:12.5px; font-weight:600;
-    padding:7px 12px; border-radius:16px; cursor:pointer; color:var(--texte-att);
-  }
-  .chip.active{background:var(--vert); border-color:var(--vert); color:#fff;}
-
-  .whoentered{display:flex; gap:8px;}
-  .whoentered button{
-    flex:1; padding:10px; border-radius:10px; border:1.5px solid var(--ligne); background:var(--panneau-clair);
-    font-weight:700; font-size:14px; cursor:pointer; color:var(--texte-att);
-  }
-  .whoentered button.active{background:var(--texte); color:var(--panneau-clair); border-color:var(--texte);}
-
-  button.submit{
-    width:100%; padding:16px; border:none; border-radius:12px; background:var(--rouge);
-    color:#fff; font-size:16px; font-weight:800; letter-spacing:.01em; cursor:pointer;
-    margin-top:6px;
-  }
-  button.submit:disabled{background:#bbb; cursor:default;}
-  button.submit:active{transform:translateY(1px);}
-
-  .status-msg{
-    text-align:center; font-size:13px; font-weight:600; margin-top:10px; min-height:18px;
-  }
-  .status-msg.ok{color:var(--vert);}
-  .status-msg.err{color:var(--rouge);}
-
-  /* history */
-  .hist-item{
-    display:flex; justify-content:space-between; align-items:flex-start; gap:10px;
-    padding:10px 0; border-bottom:1px solid var(--panneau-clair); font-size:13.5px;
-    flex-wrap:wrap;
-  }
-  .close-date{
-    width:132px; padding:6px 8px; font-size:12px; border-radius:8px;
-  }
-  .hist-item:last-child{border-bottom:none;}
-  .hist-main{font-weight:700;}
-  .hist-sub{color:var(--texte-att); font-size:12px; margin-top:2px;}
-  .hist-badge{
-    font-family:var(--mono); font-size:10px; padding:3px 8px; border-radius:6px; white-space:nowrap;
-    background:var(--panneau-clair); color:var(--texte-att);
-  }
-  .hist-badge.recidive{background:rgba(196,57,47,.15); color:var(--rouge); font-weight:700;}
-  .hist-badge.repris{background:rgba(58,157,90,.15); color:var(--vert); font-weight:700;}
-  .hist-badge.closed-badge{background:var(--vert); color:#fff; font-weight:700;}
-  .empty-state{color:var(--texte-att); font-size:13px; text-align:center; padding:16px 0;}
-  .refresh-link{
-    font-family:var(--mono); font-size:11px; color:var(--texte-att); text-decoration:underline;
-    background:none; border:none; cursor:pointer; padding:0; float:right;
-  }
-  .close-action{display:flex; gap:6px; align-items:center; flex-wrap:wrap; justify-content:flex-end;}
-  .close-error{
-    width:100%; text-align:right; font-size:11px; color:var(--rouge); font-weight:600; margin-top:2px;
-  }
-  .hist-item.closed-ok{
-    background:rgba(58,157,90,.15); border-radius:10px; padding-left:8px; padding-right:8px;
-    transition:background-color .3s;
-  }
-
 </style>
 </head>
 <body>
 <div class="wrap">
 
   <div class="header">
-    <span class="tag">U13 Limoges Football</span>
-    <h1>Cockpit Saison</h1>
+    <span class="tag">Cockpit · U13 Limoges Football</span>
+    <h1>📊 Vue Saison</h1>
     <div class="date" id="dateAffichee"></div>
   </div>
 
@@ -369,23 +178,14 @@
     </div>
   </div>
 
-  <div id="appShell" style="display:none;">
+  <div id="ecranCockpit" style="display:none;">
 
     <div class="actions-bar">
       <button id="btnActualiser">🔄 Actualiser</button>
       <button id="btnDeconnexion">🔒 Verrouiller</button>
     </div>
 
-    <div class="page-tabs">
-      <button type="button" class="page-tab-btn active" data-page="cockpit">📊 Cockpit</button>
-      <button type="button" class="page-tab-btn" data-page="signalement">📝 Signalement</button>
-      <button type="button" class="page-tab-btn" data-page="historique">🧍 Historique joueur</button>
-    </div>
-
-    <div class="page active" id="page-cockpit">
-
-
-        <!-- SÉLECTEUR DE VUE -->
+    <!-- SÉLECTEUR DE VUE -->
     <div class="vues-tabs">
       <button class="vue-tab active" data-vue="7j">7 derniers<br>jours</button>
       <button class="vue-tab" data-vue="30j">30 derniers<br>jours</button>
@@ -410,8 +210,12 @@
         <button class="filtre-btn" data-filtre="blesse">🤕 Blessés</button>
       </div>
       <div class="grille-cockpit" id="grilleCockpit"></div>
-    
-      <div class="export-zone" id="exportZone" style="display:none;">
+    </div>
+
+  </div>
+
+  <!-- ZONE EXPORT -->
+  <div class="export-zone" id="exportZone" style="display:none;">
     <h3>📄 Exporter des fiches joueurs (PDF)</h3>
     <div class="export-grille-joueurs" id="exportGrilleJoueurs"></div>
     <div class="export-actions">
@@ -420,224 +224,6 @@
       <button class="btn-export-pdf" id="btnExportPDF" disabled>Télécharger PDF</button>
     </div>
     <div class="export-status" id="exportStatus"></div>
-  </div>
-    </div>
-
-    <div class="page" id="page-signalement">
-
-
-  <form class="card" id="injuryForm">
-    <h2><span class="n">1</span> Joueur &amp; date</h2>
-    <div class="row">
-      <div>
-        <label class="field-label" for="joueur">Joueur</label>
-        <select id="joueur" required>
-          <option value="" disabled selected>Choisir…</option>
-        </select>
-      </div>
-      <div>
-        <label class="field-label" for="date">Date du signalement</label>
-        <input type="date" id="date" required>
-      </div>
-    </div>
-  </form>
-
-  <div class="card">
-    <h2><span class="n">2</span> Zone touchée</h2>
-    <div class="tabbar">
-      <button type="button" class="tab-btn active" data-tab="map">Corps cliquable</button>
-      <button type="button" class="tab-btn" data-tab="list">Liste déroulante</button>
-    </div>
-
-    <div class="tabpane active" id="tab-map">
-      <div class="bodymap-wrap">
-        <div class="bodymap-toggle">
-          <button type="button" class="view-btn active" data-view="front">Avant</button>
-          <button type="button" class="view-btn" data-view="back">Arrière</button>
-        </div>
-        <svg id="svg-front" class="bodymap" viewBox="0 0 200 400" xmlns="http://www.w3.org/2000/svg">
-          <circle cx="100" cy="30" r="22" class="zone-shape" data-zone="tete" />
-          <rect x="70" y="58" width="60" height="80" rx="16" class="zone-shape" data-zone="epaule" />
-          <rect x="42" y="70" width="24" height="70" rx="10" class="zone-shape" data-zone="coude" />
-          <rect x="134" y="70" width="24" height="70" rx="10" class="zone-shape" data-zone="coude" />
-          <rect x="40" y="144" width="20" height="34" rx="8" class="zone-shape" data-zone="poignet_main" />
-          <rect x="140" y="144" width="20" height="34" rx="8" class="zone-shape" data-zone="poignet_main" />
-          <rect x="68" y="140" width="64" height="50" rx="14" class="zone-shape growth" data-zone="hanche_bassin" />
-          <ellipse cx="100" cy="184" rx="9" ry="13" class="zone-shape" data-zone="adducteurs" />
-          <rect x="70" y="192" width="26" height="62" rx="12" class="zone-shape" data-zone="cuisse" />
-          <rect x="104" y="192" width="26" height="62" rx="12" class="zone-shape" data-zone="cuisse" />
-          <circle cx="83" cy="262" r="15" class="zone-shape growth" data-zone="genou_tta" />
-          <circle cx="117" cy="262" r="15" class="zone-shape growth" data-zone="genou_tta" />
-          <rect x="70" y="280" width="24" height="55" rx="10" class="zone-shape" data-zone="tibia" />
-          <rect x="106" y="280" width="24" height="55" rx="10" class="zone-shape" data-zone="tibia" />
-          <ellipse cx="82" cy="345" rx="14" ry="10" class="zone-shape" data-zone="cheville" />
-          <ellipse cx="118" cy="345" rx="14" ry="10" class="zone-shape" data-zone="cheville" />
-          <ellipse cx="82" cy="368" rx="16" ry="9" class="zone-shape" data-zone="pied" />
-          <ellipse cx="118" cy="368" rx="16" ry="9" class="zone-shape" data-zone="pied" />
-        </svg>
-        <svg id="svg-back" class="bodymap" viewBox="0 0 200 400" xmlns="http://www.w3.org/2000/svg" style="display:none;">
-          <circle cx="100" cy="30" r="22" class="zone-shape" data-zone="tete" />
-          <rect x="70" y="58" width="60" height="80" rx="16" class="zone-shape" data-zone="epaule" />
-          <rect x="76" y="70" width="48" height="66" rx="12" class="zone-shape growth" data-zone="dos_rachis" />
-          <rect x="42" y="70" width="24" height="70" rx="10" class="zone-shape" data-zone="coude" />
-          <rect x="134" y="70" width="24" height="70" rx="10" class="zone-shape" data-zone="coude" />
-          <rect x="68" y="140" width="64" height="50" rx="14" class="zone-shape growth" data-zone="hanche_bassin" />
-          <rect x="70" y="192" width="26" height="62" rx="12" class="zone-shape" data-zone="ischio" />
-          <rect x="104" y="192" width="26" height="62" rx="12" class="zone-shape" data-zone="ischio" />
-          <circle cx="83" cy="262" r="15" class="zone-shape" data-zone="genou_autre" />
-          <circle cx="117" cy="262" r="15" class="zone-shape" data-zone="genou_autre" />
-          <rect x="70" y="280" width="24" height="55" rx="10" class="zone-shape" data-zone="mollet" />
-          <rect x="106" y="280" width="24" height="55" rx="10" class="zone-shape" data-zone="mollet" />
-          <ellipse cx="82" cy="345" rx="14" ry="10" class="zone-shape" data-zone="cheville" />
-          <ellipse cx="118" cy="345" rx="14" ry="10" class="zone-shape" data-zone="cheville" />
-          <ellipse cx="82" cy="370" rx="16" ry="10" class="zone-shape growth" data-zone="talon" />
-          <ellipse cx="118" cy="370" rx="16" ry="10" class="zone-shape growth" data-zone="talon" />
-        </svg>
-        <p class="zone-legend">Contour pointillé <span class="dash"></span> = zone de croissance à surveiller (apophysites, rachis)</p>
-        <div class="selected-zone-label" id="mapSelectedLabel">Aucune zone sélectionnée</div>
-      </div>
-    </div>
-
-    <div class="tabpane" id="tab-list">
-      <label class="field-label" for="zoneSelect">Zone anatomique</label>
-      <select id="zoneSelect">
-        <option value="" disabled selected>Choisir une zone…</option>
-      </select>
-    </div>
-  </div>
-
-  <div class="card">
-    <h2><span class="n">3</span> Intensité</h2>
-    <div class="intensity-row" id="intensityRow">
-      <button type="button" class="intensity-btn" data-v="1">1</button>
-      <button type="button" class="intensity-btn" data-v="2">2</button>
-      <button type="button" class="intensity-btn" data-v="3">3</button>
-      <button type="button" class="intensity-btn" data-v="4">4</button>
-      <button type="button" class="intensity-btn" data-v="5">5</button>
-    </div>
-    <div class="intensity-caption"><span>Gêne légère</span><span>Douleur invalidante</span></div>
-  </div>
-
-  <div class="card">
-    <h2><span class="n">4</span> Type &amp; cause</h2>
-    <label class="field-label">Type</label>
-    <div class="pills" id="typePills" style="margin-bottom:14px;">
-      <button type="button" class="pill" data-type="traumatique">Traumatique</button>
-      <button type="button" class="pill" data-type="surcharge">Surcharge</button>
-      <button type="button" class="pill" data-type="croissance">Croissance</button>
-      <button type="button" class="pill" data-type="autre">Autre</button>
-    </div>
-    <label class="field-label" for="cause">Circonstance (optionnel)</label>
-    <textarea id="cause" placeholder="Ex : douleur ressentie après le match, choc à l'entraînement…"></textarea>
-  </div>
-
-  <div class="card">
-    <h2><span class="n">5</span> Durée estimée d'indisponibilité</h2>
-    <div class="duration-chips" id="durationChips">
-      <button type="button" class="chip" data-days="0">Aucune (joue quand même)</button>
-      <button type="button" class="chip" data-days="2">1-3 j</button>
-      <button type="button" class="chip" data-days="5">4-7 j</button>
-      <button type="button" class="chip" data-days="10">1-2 sem</button>
-      <button type="button" class="chip" data-days="21">2-4 sem</button>
-      <button type="button" class="chip" data-days="-1">Saison / inconnu</button>
-    </div>
-    <label class="field-label" for="dureeCustom">ou nombre de jours précis</label>
-    <input type="number" id="dureeCustom" min="0" placeholder="Ex : 8">
-  </div>
-
-  <div class="card">
-    <h2><span class="n">6</span> Saisi par</h2>
-    <div class="whoentered" id="whoEntered">
-      <button type="button" data-who="Moi">Moi</button>
-      <button type="button" data-who="Tom">Tom</button>
-    </div>
-  </div>
-
-  <button class="submit" id="submitBtn" type="button">Enregistrer le signalement</button>
-  <p class="status-msg" id="statusMsg"></p>
-
-  <div class="card" style="margin-top:22px;">
-    <h2>Retours à valider</h2>
-    <div id="openList"><p class="empty-state">Chargement…</p></div>
-  </div>
-
-  <div class="card" style="margin-top:16px;">
-    <h2>Historique récent <button class="refresh-link" id="refreshHist">↻ actualiser</button></h2>
-    <div id="histList"><p class="empty-state">Chargement…</p></div>
-  </div>
-
-  
-    </div>
-
-    <div class="page" id="page-historique">
-
-
-    <div class="card">
-      <h2>Choisir un joueur</h2>
-      <div class="pills" id="playerPicker"></div>
-    </div>
-
-    <div class="card" id="playerHistCard" style="display:none;">
-      <h2 id="playerHistTitle">Historique de la saison</h2>
-      <div class="bodymap-wrap">
-        <div class="bodymap-toggle">
-          <button type="button" class="view-btn-hist active" data-view="front">Avant</button>
-          <button type="button" class="view-btn-hist" data-view="back">Arrière</button>
-        </div>
-        <svg id="svg-front-hist" class="bodymap" viewBox="0 0 200 400" xmlns="http://www.w3.org/2000/svg">
-          <circle cx="100" cy="30" r="22" class="zone-shape" data-zone="tete" />
-          <rect x="70" y="58" width="60" height="80" rx="16" class="zone-shape" data-zone="epaule" />
-          <rect x="42" y="70" width="24" height="70" rx="10" class="zone-shape" data-zone="coude" />
-          <rect x="134" y="70" width="24" height="70" rx="10" class="zone-shape" data-zone="coude" />
-          <rect x="40" y="144" width="20" height="34" rx="8" class="zone-shape" data-zone="poignet_main" />
-          <rect x="140" y="144" width="20" height="34" rx="8" class="zone-shape" data-zone="poignet_main" />
-          <rect x="68" y="140" width="64" height="50" rx="14" class="zone-shape growth" data-zone="hanche_bassin" />
-          <ellipse cx="100" cy="184" rx="9" ry="13" class="zone-shape" data-zone="adducteurs" />
-          <rect x="70" y="192" width="26" height="62" rx="12" class="zone-shape" data-zone="cuisse" />
-          <rect x="104" y="192" width="26" height="62" rx="12" class="zone-shape" data-zone="cuisse" />
-          <circle cx="83" cy="262" r="15" class="zone-shape growth" data-zone="genou_tta" />
-          <circle cx="117" cy="262" r="15" class="zone-shape growth" data-zone="genou_tta" />
-          <rect x="70" y="280" width="24" height="55" rx="10" class="zone-shape" data-zone="tibia" />
-          <rect x="106" y="280" width="24" height="55" rx="10" class="zone-shape" data-zone="tibia" />
-          <ellipse cx="82" cy="345" rx="14" ry="10" class="zone-shape" data-zone="cheville" />
-          <ellipse cx="118" cy="345" rx="14" ry="10" class="zone-shape" data-zone="cheville" />
-          <ellipse cx="82" cy="368" rx="16" ry="9" class="zone-shape" data-zone="pied" />
-          <ellipse cx="118" cy="368" rx="16" ry="9" class="zone-shape" data-zone="pied" />
-        </svg>
-        <svg id="svg-back-hist" class="bodymap" viewBox="0 0 200 400" xmlns="http://www.w3.org/2000/svg" style="display:none;">
-          <circle cx="100" cy="30" r="22" class="zone-shape" data-zone="tete" />
-          <rect x="70" y="58" width="60" height="80" rx="16" class="zone-shape" data-zone="epaule" />
-          <rect x="76" y="70" width="48" height="66" rx="12" class="zone-shape growth" data-zone="dos_rachis" />
-          <rect x="42" y="70" width="24" height="70" rx="10" class="zone-shape" data-zone="coude" />
-          <rect x="134" y="70" width="24" height="70" rx="10" class="zone-shape" data-zone="coude" />
-          <rect x="68" y="140" width="64" height="50" rx="14" class="zone-shape growth" data-zone="hanche_bassin" />
-          <rect x="70" y="192" width="26" height="62" rx="12" class="zone-shape" data-zone="ischio" />
-          <rect x="104" y="192" width="26" height="62" rx="12" class="zone-shape" data-zone="ischio" />
-          <circle cx="83" cy="262" r="15" class="zone-shape" data-zone="genou_autre" />
-          <circle cx="117" cy="262" r="15" class="zone-shape" data-zone="genou_autre" />
-          <rect x="70" y="280" width="24" height="55" rx="10" class="zone-shape" data-zone="mollet" />
-          <rect x="106" y="280" width="24" height="55" rx="10" class="zone-shape" data-zone="mollet" />
-          <ellipse cx="82" cy="345" rx="14" ry="10" class="zone-shape" data-zone="cheville" />
-          <ellipse cx="118" cy="345" rx="14" ry="10" class="zone-shape" data-zone="cheville" />
-          <ellipse cx="82" cy="370" rx="16" ry="10" class="zone-shape growth" data-zone="talon" />
-          <ellipse cx="118" cy="370" rx="16" ry="10" class="zone-shape growth" data-zone="talon" />
-        </svg>
-        <p class="zone-legend">
-          <span class="dot dot-0"></span> aucune ·
-          <span class="dot dot-1"></span> 1 fois ·
-          <span class="dot dot-2"></span> 2 fois ou plus — clique une zone colorée pour voir le détail
-        </p>
-        <div id="playerZoneDetail" class="selected-zone-label">Sélectionne une zone colorée pour voir les dates.</div>
-      </div>
-    </div>
-
-    <div class="card" id="playerNoData" style="display:none;">
-      <p class="empty-state">Aucune blessure signalée cette saison pour ce joueur.</p>
-    </div>
-
-  
-    </div>
-
   </div>
 
   <div class="footer-note">Données agrégées depuis Météo · RPE · Match Day · Blessures</div>
@@ -661,24 +247,11 @@
 
   var EFFECTIF = ["Abdoul Karim","Adam","Bakoutoubo","Bilel","Emir","Ethan","Gabin","Hadi","Issam","Jalil","Kalifa","Keys","Loan","Mathis","Melih","Mickaël","Nourou","Pablo","Sacha","Sarah","Sebastien","Yanis"];
 
-  var ZONES = {
-    tete:            {label:"Tête", growth:false},
-    epaule:          {label:"Épaule", growth:false},
-    coude:           {label:"Coude", growth:false},
-    poignet_main:    {label:"Poignet / Main", growth:false},
-    dos_rachis:      {label:"Dos / Rachis", growth:true},
-    hanche_bassin:   {label:"Hanche / Bassin", growth:true},
-    adducteurs:      {label:"Adducteurs / aine", growth:false},
-    ischio:          {label:"Ischio-jambiers", growth:false},
-    cuisse:          {label:"Quadriceps", growth:false},
-    genou_tta:       {label:"Genou — avant (tubérosité tibiale antérieure)", growth:true},
-    genou_autre:     {label:"Genou — autre (ligament, ménisque…)", growth:false},
-    tibia:           {label:"Tibia (périostite / choc)", growth:false},
-    mollet:          {label:"Mollet (triceps sural)", growth:false},
-    cheville:        {label:"Cheville", growth:false},
-    talon:           {label:"Talon (arrière calcanéen)", growth:true},
-    pied:            {label:"Pied", growth:false},
-    autre:           {label:"Autre / non listé", growth:false}
+  var ZONES_LABELS = {
+    tete:"Tête",epaule:"Épaule",coude:"Coude",poignet_main:"Poignet / Main",
+    dos_rachis:"Dos / Rachis",hanche_bassin:"Hanche / Bassin",adducteurs:"Adducteurs / aine",
+    ischio:"Ischio-jambiers",cuisse:"Quadriceps",genou_tta:"Genou — avant (TTA)",genou_autre:"Genou — autre",
+    tibia:"Tibia",mollet:"Mollet",cheville:"Cheville",talon:"Talon",pied:"Pied",autre:"Autre"
   };
 
   var moisFr = ["janvier","février","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","décembre"];
@@ -726,7 +299,7 @@
 
   function ouvrirCockpit(){
     document.getElementById("ecranAuth").style.display="none";
-    document.getElementById("appShell").style.display="block";
+    document.getElementById("ecranCockpit").style.display="block";
     chargerTout();
   }
   document.getElementById("btnDeconnexion").addEventListener("click", function(){ sessionStorage.removeItem(SESSION_KEY); location.reload(); });
@@ -776,7 +349,6 @@
     ]).then(function(res){
       donneesBrutes = { meteo:res[0], rpe:res[1], hooper:res[2], blessures:res[3] };
       afficherCockpit(donneesBrutes);
-      rafraichirPanneauxBlessures();
       document.getElementById("lastUpdate").textContent = "Mis à jour à "+new Date().toLocaleTimeString("fr-FR",{hour:"2-digit",minute:"2-digit"});
     }).catch(function(){
       document.getElementById("chargement").innerHTML="<div class='vide'>Impossible de charger les données. Vérifiez votre connexion.</div>";
@@ -1094,7 +666,7 @@
         zonesHTML='<div class="detail-section"><div class="detail-titre">Zones blessées</div>';
         zonesTriees.forEach(function(z){
           var n=j.blessure.parZone[z];
-          var lbl=(ZONES[z]&&ZONES[z].label)||z;
+          var lbl=ZONES_LABELS[z]||z;
           var alerte = n>=2 ? ' <span style="color:var(--rouge);">⚠</span>' : '';
           zonesHTML+='<div class="bilan-zone-bar"><span class="bz-lbl">'+escapeHTML(lbl)+alerte+'</span><div class="bz-track"><div class="bz-fill" style="width:'+Math.round(n/max*100)+'%"></div></div><span class="bz-count">'+n+'</span></div>';
         });
@@ -1133,7 +705,7 @@
       var dateStr=normalDate(b.date);
       var d=new Date(dateStr+"T12:00:00");
       var dateAff=d.getDate()+" "+moisFrC[d.getMonth()];
-      var zone=b.zoneLabel||(ZONES[b.zone]&&ZONES[b.zone].label)||b.zone||"—";
+      var zone=b.zoneLabel||ZONES_LABELS[b.zone]||b.zone||"—";
       var type=b.type||"autre";
       var duree=parseInt(b.dureeJours,10)||0;
       var statut=b.statut||"";
@@ -1346,7 +918,7 @@
             doc.text("BLESSURES ("+j.blessure.recentes.length+")", mL, y+4);
             y += 7;
             blTri.forEach(function(b){
-              var zone = b.zoneLabel||(ZONES[b.zone]&&ZONES[b.zone].label)||b.zone||"—";
+              var zone = b.zoneLabel||ZONES_LABELS[b.zone]||b.zone||"—";
               var type = b.type||"—";
               var duree = parseInt(b.dureeJours,10)||0;
               var statut = b.statut||"";
@@ -1406,346 +978,6 @@
   }
 
   function escapeHTML(s){ var d=document.createElement("div");d.textContent=s;return d.innerHTML; }
-
-const state = { zone:null, intensity:null, type:null, duree:null, who:null };
-
-// --- init selects ---
-const joueurSelect = document.getElementById('joueur');
-EFFECTIF.forEach(p=>{
-  const o=document.createElement('option'); o.value=p; o.textContent=p; joueurSelect.appendChild(o);
-});
-const zoneSelect = document.getElementById('zoneSelect');
-Object.entries(ZONES).forEach(([id,z])=>{
-  const o=document.createElement('option'); o.value=id;
-  o.textContent = z.label + (z.growth ? " ⚠ croissance" : "");
-  zoneSelect.appendChild(o);
-});
-zoneSelect.addEventListener('change', ()=>{
-  setZone(zoneSelect.value);
-});
-
-document.getElementById('date').valueAsDate = new Date();
-
-// --- page-level tabs (Cockpit / Signalement / Historique joueur) ---
-document.querySelectorAll('.page-tab-btn').forEach(btn=>{
-  btn.addEventListener('click', ()=>{
-    document.querySelectorAll('.page-tab-btn').forEach(b=>b.classList.remove('active'));
-    document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-    btn.classList.add('active');
-    document.getElementById('page-'+btn.dataset.page).classList.add('active');
-    if(btn.dataset.page==='historique'){ renderPlayerHistory(); }
-  });
-});
-
-// --- tabs (Corps cliquable / Liste déroulante) ---
-document.querySelectorAll('.tab-btn').forEach(btn=>{
-  btn.addEventListener('click', ()=>{
-    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
-    document.querySelectorAll('.tabpane').forEach(p=>p.classList.remove('active'));
-    btn.classList.add('active');
-    document.getElementById('tab-'+btn.dataset.tab).classList.add('active');
-  });
-});
-
-// --- body map view toggle ---
-document.querySelectorAll('.view-btn').forEach(btn=>{
-  btn.addEventListener('click', ()=>{
-    document.querySelectorAll('.view-btn').forEach(b=>b.classList.remove('active'));
-    btn.classList.add('active');
-    document.getElementById('svg-front').style.display = btn.dataset.view==='front' ? 'block':'none';
-    document.getElementById('svg-back').style.display = btn.dataset.view==='back' ? 'block':'none';
-  });
-});
-
-// --- body map click ---
-document.querySelectorAll('#tab-map .zone-shape').forEach(shape=>{
-  shape.addEventListener('click', ()=>{
-    setZone(shape.dataset.zone);
-  });
-});
-
-function setZone(zoneId){
-  state.zone = zoneId;
-  document.querySelectorAll('#tab-map .zone-shape').forEach(s=>{
-    s.classList.toggle('selected', s.dataset.zone===zoneId);
-  });
-  zoneSelect.value = zoneId;
-  const z = ZONES[zoneId];
-  document.getElementById('mapSelectedLabel').textContent = z
-    ? z.label + (z.growth ? " — zone de croissance ⚠" : "")
-    : "Aucune zone sélectionnée";
-}
-
-// --- intensity ---
-document.querySelectorAll('.intensity-btn').forEach(btn=>{
-  btn.addEventListener('click', ()=>{
-    document.querySelectorAll('.intensity-btn').forEach(b=>b.classList.remove('active'));
-    btn.classList.add('active');
-    state.intensity = parseInt(btn.dataset.v,10);
-  });
-});
-
-// --- type pills ---
-document.querySelectorAll('#typePills .pill').forEach(btn=>{
-  btn.addEventListener('click', ()=>{
-    document.querySelectorAll('#typePills .pill').forEach(b=>b.classList.remove('active','type-traumatique','type-surcharge','type-croissance'));
-    btn.classList.add('active','type-'+btn.dataset.type);
-    state.type = btn.dataset.type;
-  });
-});
-
-// --- duration chips ---
-document.querySelectorAll('#durationChips .chip').forEach(btn=>{
-  btn.addEventListener('click', ()=>{
-    document.querySelectorAll('#durationChips .chip').forEach(b=>b.classList.remove('active'));
-    btn.classList.add('active');
-    state.duree = parseInt(btn.dataset.days,10);
-    document.getElementById('dureeCustom').value = '';
-  });
-});
-document.getElementById('dureeCustom').addEventListener('input', (e)=>{
-  document.querySelectorAll('#durationChips .chip').forEach(b=>b.classList.remove('active'));
-  state.duree = e.target.value ? parseInt(e.target.value,10) : null;
-});
-
-// --- who entered ---
-document.querySelectorAll('#whoEntered button').forEach(btn=>{
-  btn.addEventListener('click', ()=>{
-    document.querySelectorAll('#whoEntered button').forEach(b=>b.classList.remove('active'));
-    btn.classList.add('active');
-    state.who = btn.dataset.who;
-  });
-});
-
-// --- submit ---
-document.getElementById('submitBtn').addEventListener('click', async ()=>{
-  const joueur = joueurSelect.value;
-  const date = document.getElementById('date').value;
-  const cause = document.getElementById('cause').value;
-
-  if(!joueur){ return showStatus("Choisis un joueur.", false); }
-  if(!state.zone){ return showStatus("Sélectionne une zone (carte ou liste).", false); }
-  if(!state.intensity){ return showStatus("Indique l'intensité.", false); }
-  if(!state.type){ return showStatus("Choisis un type (traumatique / surcharge / croissance / autre).", false); }
-  if(state.duree===null || state.duree===undefined || isNaN(state.duree)){ return showStatus("Indique une durée estimée.", false); }
-  if(!state.who){ return showStatus("Indique qui saisit (Moi / Tom).", false); }
-
-  const payload = {
-    id: 'inj-' + Date.now() + '-' + Math.random().toString(36).slice(2,7),
-    date, joueur,
-    zone: state.zone, zoneLabel: ZONES[state.zone].label, zoneCroissance: !!ZONES[state.zone].growth,
-    intensite: state.intensity,
-    type: state.type,
-    cause,
-    dureeJours: state.duree,
-    saisiPar: state.who
-  };
-
-  const btn = document.getElementById('submitBtn');
-  btn.disabled = true; btn.textContent = "Enregistrement…";
-
-  try{
-    await fetch(URL_BLESSURE, {
-      method:'POST',
-      headers:{'Content-Type':'text/plain;charset=utf-8'},
-      body: JSON.stringify(payload)
-    });
-    showStatus("Signalement enregistré ✓", true);
-    resetForm();
-    chargerTout();
-  }catch(err){
-    showStatus("Erreur d'envoi : " + err.message, false);
-  }finally{
-    btn.disabled=false; btn.textContent="Enregistrer le signalement";
-  }
-});
-
-function showStatus(msg, ok){
-  const el = document.getElementById('statusMsg');
-  el.textContent = msg;
-  el.className = 'status-msg ' + (ok?'ok':'err');
-}
-
-function resetForm(){
-  joueurSelect.value='';
-  zoneSelect.value='';
-  state.zone=null; state.intensity=null; state.type=null; state.duree=null;
-  document.getElementById('mapSelectedLabel').textContent="Aucune zone sélectionnée";
-  document.querySelectorAll('#tab-map .zone-shape').forEach(s=>s.classList.remove('selected'));
-  document.querySelectorAll('.intensity-btn').forEach(b=>b.classList.remove('active'));
-  document.querySelectorAll('#typePills .pill').forEach(b=>b.classList.remove('active','type-traumatique','type-surcharge','type-croissance'));
-  document.querySelectorAll('#durationChips .chip').forEach(b=>b.classList.remove('active'));
-  document.getElementById('dureeCustom').value='';
-  document.getElementById('cause').value='';
-}
-
-// --- historique récent / retours à valider (données partagées avec le Cockpit) ---
-function todayStr(){ return new Date().toISOString().slice(0,10); }
-
-function renderHistoriqueRecent(rows){
-  const el = document.getElementById('histList');
-  if(!rows || !rows.length){ el.innerHTML='<p class="empty-state">Aucun signalement pour le moment.</p>'; return; }
-  const tri = rows.slice().sort((a,b)=> normalDate(b.date) > normalDate(a.date) ? 1 : -1);
-  el.innerHTML = tri.slice(0,15).map(r=>{
-    let badge = r.zoneCroissance ? 'croissance' : '';
-    let badgeClass = '';
-    if(r.recidive){ badge='⚠ récidive'; badgeClass='recidive'; }
-    else if(r.statut==='Repris'){ badge='✓ repris le '+r.dateFinReelle; badgeClass='repris'; }
-    return `
-    <div class="hist-item">
-      <div>
-        <div class="hist-main">${escapeHTML(r.joueur)} — ${escapeHTML(r.zoneLabel||r.zone)}</div>
-        <div class="hist-sub">${r.date} · intensité ${r.intensite}/5 · ${r.type} · ${r.dureeJours<0?'saison/inconnu':r.dureeJours+' j'} · saisi par ${escapeHTML(r.saisiPar||'')}</div>
-      </div>
-      <span class="hist-badge ${badgeClass}">${badge}</span>
-    </div>`;
-  }).join('');
-}
-
-function renderOpenInjuries(rows){
-  const openEl = document.getElementById('openList');
-  const open = (rows||[]).filter(r=> r.statut === 'En cours');
-  if(!open.length){ openEl.innerHTML = '<p class="empty-state">Aucune blessure en cours 🎉</p>'; return; }
-  openEl.innerHTML = open.map(r=>`
-    <div class="hist-item" data-id="${r.id||''}" data-joueur="${escapeHTML(r.joueur)}" data-zone="${r.zone}" data-date="${r.date}">
-      <div>
-        <div class="hist-main">${escapeHTML(r.joueur)} — ${escapeHTML(r.zoneLabel||r.zone)}</div>
-        <div class="hist-sub">Blessé le ${r.date} · intensité ${r.intensite}/5 · ${r.type}</div>
-      </div>
-      <div class="close-action">
-        <input type="date" class="close-date" value="${todayStr()}">
-        <button type="button" class="chip close-btn">Retour ✓</button>
-      </div>
-    </div>
-  `).join('');
-}
-
-document.getElementById('openList').addEventListener('click', async (e)=>{
-  const btn = e.target.closest('.close-btn');
-  if(!btn) return;
-  const item = btn.closest('.hist-item');
-  const dateFin = item.querySelector('.close-date').value;
-  const payload = {
-    action: 'close',
-    id: item.dataset.id || undefined,
-    dateFin,
-    joueur: item.dataset.joueur,
-    zone: item.dataset.zone,
-    date: item.dataset.date
-  };
-  btn.disabled = true; btn.textContent = '…';
-  try{
-    const res = await fetch(URL_BLESSURE, {
-      method:'POST',
-      headers:{'Content-Type':'text/plain;charset=utf-8'},
-      body: JSON.stringify(payload)
-    });
-    const data = await res.json();
-    if(!data.ok){
-      throw new Error(data.error || "échec de l'enregistrement");
-    }
-    item.classList.add('closed-ok');
-    const actionEl = item.querySelector('.close-action');
-    actionEl.innerHTML = '<span class="hist-badge closed-badge">✓ Repris</span>';
-    setTimeout(()=>{ chargerTout(); }, 900);
-  }catch(err){
-    btn.disabled = false; btn.textContent = 'Retour ✓';
-    let errEl = item.querySelector('.close-error');
-    if(!errEl){
-      errEl = document.createElement('div');
-      errEl.className = 'close-error';
-      item.querySelector('.close-action').appendChild(errEl);
-    }
-    errEl.textContent = "Échec : " + err.message;
-  }
-});
-
-document.getElementById('refreshHist').addEventListener('click', chargerTout);
-
-/* ================= Historique par joueur ================= */
-let selectedPlayer = null;
-let currentByZone = {};
-
-const playerPicker = document.getElementById('playerPicker');
-EFFECTIF.forEach(p=>{
-  const b = document.createElement('button');
-  b.type='button'; b.className='pill'; b.textContent=p;
-  b.addEventListener('click', ()=>{
-    document.querySelectorAll('#playerPicker .pill').forEach(x=>x.classList.remove('active'));
-    b.classList.add('active');
-    selectedPlayer = p;
-    renderPlayerHistory();
-  });
-  playerPicker.appendChild(b);
-});
-
-// front/back toggle for the history body map
-document.querySelectorAll('.view-btn-hist').forEach(btn=>{
-  btn.addEventListener('click', ()=>{
-    document.querySelectorAll('.view-btn-hist').forEach(b=>b.classList.remove('active'));
-    btn.classList.add('active');
-    document.getElementById('svg-front-hist').style.display = btn.dataset.view==='front' ? 'block':'none';
-    document.getElementById('svg-back-hist').style.display = btn.dataset.view==='back' ? 'block':'none';
-  });
-});
-
-// zone click on the history body map -> show dates for that zone
-document.querySelectorAll('#page-historique .zone-shape').forEach(shape=>{
-  shape.addEventListener('click', ()=>{
-    const zid = shape.dataset.zone;
-    const list = currentByZone[zid] || [];
-    const detail = document.getElementById('playerZoneDetail');
-    if(!list.length){
-      detail.textContent = (ZONES[zid]?ZONES[zid].label:zid) + " — aucune blessure signalée à cette zone.";
-      return;
-    }
-    const label = ZONES[zid] ? ZONES[zid].label : zid;
-    detail.innerHTML = `<strong>${escapeHTML(label)}</strong> — ${list.length} signalement${list.length>1?'s':''} :<br>` +
-      list.map(r=>`${r.date} · intensité ${r.intensite}/5 · ${r.type}${r.dureeJours>=0 ? ' · '+r.dureeJours+' j' : ''}${r.statut==='Repris'?' · revenu le '+r.dateFinReelle:''}`).join('<br>');
-  });
-});
-
-function renderPlayerHistory(){
-  if(!selectedPlayer) return;
-  const histCard = document.getElementById('playerHistCard');
-  const noData = document.getElementById('playerNoData');
-  const titleEl = document.getElementById('playerHistTitle');
-  titleEl.textContent = "Historique de la saison — " + selectedPlayer;
-
-  const all = (donneesBrutes && donneesBrutes.blessures) || [];
-  const records = all.filter(r=>r.joueur===selectedPlayer);
-
-  currentByZone = {};
-  records.forEach(r=>{ (currentByZone[r.zone] = currentByZone[r.zone]||[]).push(r); });
-
-  if(!records.length){
-    histCard.style.display='none';
-    noData.style.display='block';
-    return;
-  }
-  noData.style.display='none';
-  histCard.style.display='block';
-
-  document.querySelectorAll('#page-historique .zone-shape').forEach(shape=>{
-    const zid = shape.dataset.zone;
-    const count = (currentByZone[zid]||[]).length;
-    shape.classList.remove('selected');
-    if(count>=2){ shape.style.fill='var(--rouge)'; shape.style.stroke='var(--rouge)'; shape.style.cursor='pointer'; }
-    else if(count===1){ shape.style.fill='var(--or)'; shape.style.stroke='var(--or)'; shape.style.cursor='pointer'; }
-    else { shape.style.fill='var(--panneau-clair)'; shape.style.stroke='var(--ligne)'; shape.style.cursor='default'; }
-  });
-
-  document.getElementById('playerZoneDetail').textContent = "Sélectionne une zone colorée pour voir les dates.";
-}
-
-// première population des panneaux blessures si les données sont déjà là
-function rafraichirPanneauxBlessures(){
-  const rows = (donneesBrutes && donneesBrutes.blessures) || [];
-  renderHistoriqueRecent(rows);
-  renderOpenInjuries(rows);
-  if(selectedPlayer) renderPlayerHistory();
-}
-
 })();
 </script>
 </body>
